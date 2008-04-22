@@ -1,0 +1,77 @@
+#!/usr/bin/python
+import sys
+import getopt
+import threading
+import time
+import os
+import commands
+import subprocess
+
+from subprocess import Popen
+
+def PrintUsage():
+	print "Incorrect Usage"
+
+def MonitorForkedProcess(pObj, optional_args):
+	returnCode = pObj.poll()
+
+	if returnCode is None:
+		commands.getstatusoutput("kill " + str(pObj.pid))
+		if (optional_args.has_key('timeout-ok')):
+			print 'Process Timed Out: OK'
+                else:
+		        print "Process Timed Out! Killed Process."
+	elif returnCode == -11:
+		print "Segmentation Fault Encountered"
+	
+
+def GenerateFuzzString(fuzz_string_spec):
+	return "[0-9]+"
+
+def GenerateFuzzFile(fuzz_file_spec):
+	return "./dummy_file"
+
+def FuzzProgram(optional_args, cmd_string):
+	print "Issuing Command: " + cmd_string
+	pObj = Popen(cmd_string, shell=True)
+	
+	if optional_args.has_key("timeout-fail"):
+#		timer = Timer(int(optional_args["timeout-fail"]), killProc
+		time.sleep(int(optional_args["timeout-fail"]))
+		MonitorForkedProcess(pObj, optional_args)
+	elif optional_args.has_key("timeout-ok"):
+		time.sleep(int(optional_args["timeout-ok"]))
+		MonitorForkedProcess(pObj, optional_args)
+	else:
+	        pObj.wait()
+		print pObj.returncode
+	
+
+def ParseArguments(argv):
+	optionals, args = getopt.getopt(argv, "hu", ["replay=", "timeout-fail=", "trials=", "timeout-ok="])
+	optional_args = {}
+	main_args = {}
+	cmd_string = ""
+
+	for elem in optionals:
+		optional_args[elem[0][2:]] = elem[1]
+
+	cmd_string += args[0]
+	
+	ctr = 1
+	
+	while (ctr < len(args)):
+		if (args[ctr] == "--fuzz-string"):
+			cmd_string += " " + GenerateFuzzString(args[ctr+1])
+			ctr+=2
+		elif (args[ctr] == "--fuzz-file"):
+			cmd_string += " " + GenerateFuzzFile(args[ctr+1])
+			ctr+=2
+		else:
+			cmd_string += " " + args[ctr]
+			ctr+=1 
+	
+	FuzzProgram(optional_args, cmd_string)			
+
+if __name__ == "__main__":
+	ParseArguments(sys.argv[1:])
