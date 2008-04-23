@@ -1,5 +1,4 @@
 import random
-import time
 
 file_handle = open("./ex_grm.dat")
 
@@ -11,8 +10,6 @@ terminalSymbols = {}
 target = nonTerminalSymbols
 startSym = None
 totalOutput = ''
-currentTime = time.time()
-random.seed(currentTime)
 
 for line in grammar_lines:
 	if "TERMINALS" in line:
@@ -59,10 +56,11 @@ def output(symbol):
 	totalOutput += str(symbol)
 	return
 
-def getSeed():
-	return currentTime
-
+def getFuzzInput(spec):
+	global totalOutput
+	produce(startSym)
+	if spec=='calc':
+		return totalOutput
 
 print "\nNow producing..."
-produce(startSym)
-print totalOutput
+print getFuzzInput('calc')
