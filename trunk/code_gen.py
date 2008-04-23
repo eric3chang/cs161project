@@ -1,4 +1,5 @@
 import random
+import time
 
 file_handle = open("./ex_grm.dat")
 
@@ -10,6 +11,8 @@ terminalSymbols = {}
 target = nonTerminalSymbols
 startSym = None
 totalOutput = ''
+currentTime = time.time()
+random.seed(currentTime)
 
 for line in grammar_lines:
 	if "TERMINALS" in line:
@@ -55,6 +58,9 @@ def output(symbol):
 	global totalOutput
 	totalOutput += str(symbol)
 	return
+
+def getSeed():
+	return currentTime
 
 
 print "\nNow producing..."
