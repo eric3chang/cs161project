@@ -57,8 +57,10 @@ def output(symbol):
 	totalOutput += str(symbol)
 	return
 
-def getFuzzInput(spec):
+def getFuzzInput(spec, seed):
+	random.seed(seed)
 	global totalOutput
+	totalOutput = ''
 	produce(startSym)
 	if spec=='postscript':
 		return totalOutput
