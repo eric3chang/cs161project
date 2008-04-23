@@ -15,6 +15,8 @@ from subprocess import Popen
 from threading import Timer
 
 seed = 0.0
+supported_file_specs = ['postscript']
+supported_string_specs = []
 
 def PrintUsage():
 	print "Incorrect Usage"
@@ -33,21 +35,29 @@ def MonitorForkedProcess(pObj, optional_args):
 		message += 'Segmentation Fault Encountered'
 	else:
 		pass # message += 'Everything went OK?'
-	print message
-	
-
+	# print message
 def GenerateFuzzString(fuzz_string_spec):
 	global seed
+	global supported_string_specs
+
+	if not fuzz_string_spec in supported_string_specs:
+		raise "Unsupported SPEC for --fuzz-string option"
+
 	fuzz = code_gen.getFuzzInput('postscript', seed)
-	print fuzz
+	#print fuzz
 	return fuzz
 
 def GenerateFuzzFile(fuzz_file_spec):
 	global seed
+	global supported_file_specs
+ 
+	if not fuzz_file_spec in supported_file_specs:
+		raise "Unsupported SPEC for --fuzz-file option"
+
 	fuzz = code_gen.getFuzzInput('postscript', seed)
-	fd = open("./test_file", 'w')
+	fd = open("./fuzz_input_file", 'w')
 	fd.write(fuzz)
-	return "./test_file"
+	return "./fuzz_input_file"
 
 def killProc(pid):
 	returnCode, output = commands.getstatusoutput('kill ' + str(pid))
@@ -61,14 +71,14 @@ def timeTest(time, proc):
 
 def FuzzProgram(opts, args):
 	global seed
-	trials = int(opts.get('trials', 1))
+	trials = int(opts.get('trials', 2000000000))
 	for trial in xrange(0, trials):
 		seed = float(opts.get('replay', time.time()))
 		random.seed(seed)
 		
 		cmd = generateFuzz(args)
 
-		print "Issuing Command: " + cmd
+		#print "Issuing Command: " + cmd
 		proc = Popen(cmd, shell=True)
 		
 		if opts.has_key("timeout-fail"):
@@ -78,9 +88,11 @@ def FuzzProgram(opts, args):
 		else:
 			proc.wait()
 		MonitorForkedProcess(proc, opts)
-		print proc.returncode
-		if proc.returncode == -11:
-			print 'Seed is ' + str(seed)
+	
+		#print proc.returncode
+		if proc.returncode == -11 or proc.returncode == -15:
+			print seed
+			return
 
 def ParseArguments(argv):
 	global seed
