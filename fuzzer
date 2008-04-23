@@ -16,7 +16,8 @@ from threading import Timer
 
 seed = 0.0
 supported_file_specs = ['postscript']
-supported_string_specs = []
+supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'ps-file']
+
 
 def PrintUsage():
 	print "Incorrect Usage"
@@ -36,6 +37,7 @@ def MonitorForkedProcess(pObj, optional_args):
 	else:
 		pass # message += 'Everything went OK?'
 	# print message
+
 def GenerateFuzzString(fuzz_string_spec):
 	global seed
 	global supported_string_specs
@@ -69,16 +71,27 @@ def timeTest(time, proc):
 	proc.wait()
 	timer.cancel()
 
-def FuzzProgram(opts, args):
+def FuzzProgram(opts, args, replay=False):
 	global seed
 	trials = int(opts.get('trials', 2000000000))
+	timeoutOk = True
+
+	# Consider timeouts to be failures
+	if opts.has_key("timeout-fail"):
+		timeoutOk = False
+
+	if opts.has_key('replay'):
+		trials = 1
+
 	for trial in xrange(0, trials):
 		seed = float(opts.get('replay', time.time()))
 		random.seed(seed)
 		
 		cmd = generateFuzz(args)
 
-		#print "Issuing Command: " + cmd
+		if (replay):
+			print cmd
+
 		proc = Popen(cmd, shell=True)
 		
 		if opts.has_key("timeout-fail"):
@@ -87,10 +100,11 @@ def FuzzProgram(opts, args):
 			timeTest(int(opts['timeout-ok']), proc)
 		else:
 			proc.wait()
+
 		MonitorForkedProcess(proc, opts)
 	
 		#print proc.returncode
-		if proc.returncode == -11 or proc.returncode == -15:
+		if proc.returncode == -11 or (proc.returncode == -15 and not timeoutOk):
 			print seed
 			return
 
@@ -109,7 +123,7 @@ def ParseArguments(argv):
 	random.seed(seed)
 	cmd = generateFuzz(args)
 
-	FuzzProgram(optional_args, args)
+	FuzzProgram(optional_args, args, replay=True)
 
 def generateFuzz(args):
 	ctr = 1
