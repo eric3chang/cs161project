@@ -59,8 +59,8 @@ def output(symbol):
 def getFuzzInput(spec):
 	global totalOutput
 	produce(startSym)
-	if spec=='calc':
+	if spec=='postscript':
 		return totalOutput
 
 print "\nNow producing..."
-print getFuzzInput('calc')
+print getFuzzInput('postscript')
