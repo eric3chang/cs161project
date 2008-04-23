@@ -45,8 +45,9 @@ def GenerateFuzzString(fuzz_string_spec):
 def GenerateFuzzFile(fuzz_file_spec):
 	global seed
 	fuzz = code_gen.getFuzzInput('postscript', seed)
-	print fuzz
-	return "./dummy_file"
+	fd = open("./test_file", 'w')
+	fd.write(fuzz)
+	return "./test_file"
 
 def killProc(pid):
 	returnCode, output = commands.getstatusoutput('kill ' + str(pid))
