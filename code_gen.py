@@ -29,6 +29,7 @@ for line in grammar_lines:
 	for production in prod_def[1].split(" | "):
 		target[prod_def[0]].append(production.strip())
 
+'''
 print "Start Symbol: " + startSym
 
 print "Terminal Symbols:"
@@ -38,7 +39,7 @@ for key in terminalSymbols.keys():
 print "Non-Terminal Symbols:"
 for key in nonTerminalSymbols.keys():
         print str(key) + " , " + str(nonTerminalSymbols[key])
-
+'''
 
 def produce(sym):
 	terminal = terminalSymbols.get(sym)
@@ -62,5 +63,8 @@ def getFuzzInput(spec):
 	if spec=='postscript':
 		return totalOutput
 
+'''
 print "\nNow producing..."
 print getFuzzInput('postscript')
+'''
+
