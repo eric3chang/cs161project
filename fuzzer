@@ -6,72 +6,106 @@ import time
 import os
 import commands
 import subprocess
+import time
+import random
+
+import code_gen
 
 from subprocess import Popen
+from threading import Timer
+
+seed = 0.0
 
 def PrintUsage():
 	print "Incorrect Usage"
 
 def MonitorForkedProcess(pObj, optional_args):
-	returnCode = pObj.poll()
+	returnCode = pObj.returncode #pObj.poll()
+	message = '' # '%i %i ' % (returnCode, pObj.poll())
 
-	if returnCode is None:
-		commands.getstatusoutput("kill " + str(pObj.pid))
+	if returnCode == -15:
+		# means "killed by signal 15"; exit code is 143:
 		if (optional_args.has_key('timeout-ok')):
-			print 'Process Timed Out: OK'
+			message += 'Process Timed Out: OK'
                 else:
-		        print "Process Timed Out! Killed Process."
-	elif returnCode == -11:
-		print "Segmentation Fault Encountered"
+		        message += 'Process Timed Out: Killed Process.'
+	elif returnCode == -11: # SEGV
+		message += 'Segmentation Fault Encountered'
+	else:
+		pass # message += 'Everything went OK?'
+	print message
 	
 
 def GenerateFuzzString(fuzz_string_spec):
-	return "[0-9]+"
+	fuzz = getFuzzInput('postscript')
+	print fuzz
+	return fuzz
 
 def GenerateFuzzFile(fuzz_file_spec):
+	#global getFuzzInput
+	fuzz = code_gen.getFuzzInput('postscript')
+	print fuzz
 	return "./dummy_file"
 
-def FuzzProgram(optional_args, cmd_string):
-	print "Issuing Command: " + cmd_string
-	pObj = Popen(cmd_string, shell=True)
-	
-	if optional_args.has_key("timeout-fail"):
-#		timer = Timer(int(optional_args["timeout-fail"]), killProc
-		time.sleep(int(optional_args["timeout-fail"]))
-		MonitorForkedProcess(pObj, optional_args)
-	elif optional_args.has_key("timeout-ok"):
-		time.sleep(int(optional_args["timeout-ok"]))
-		MonitorForkedProcess(pObj, optional_args)
-	else:
-	        pObj.wait()
-		print pObj.returncode
-	
+def killProc(pid):
+	returnCode, output = commands.getstatusoutput('kill ' + str(pid))
+	return
+
+def timeTest(time, proc):
+	timer = Timer(time, killProc, (proc.pid,))
+	timer.start()
+	proc.wait()
+	timer.cancel()
+
+def FuzzProgram(opts, cmd):
+	trials = opts.get('trials', 1)
+	for trial in xrange(0, trials):
+		seed = opts.get('replay', time.time())
+		random.seed(seed)
+		
+		print "Issuing Command: " + cmd
+		proc = Popen(cmd, shell=True)
+		
+		if opts.has_key("timeout-fail"):
+			timeTest(int(opts['timeout-fail']), proc)
+		elif opts.has_key("timeout-ok"):
+			timeTest(int(opts['timeout-ok']), proc)
+		else:
+			proc.wait()
+		MonitorForkedProcess(proc, opts)
+		print proc.returncode
+		if proc.returncode == -11:
+			print 'Seed is ' + str(seed)
 
 def ParseArguments(argv):
+	global seed
 	optionals, args = getopt.getopt(argv, "hu", ["replay=", "timeout-fail=", "trials=", "timeout-ok="])
 	optional_args = {}
 	main_args = {}
-	cmd_string = ""
+	cmd = ''
 
 	for elem in optionals:
 		optional_args[elem[0][2:]] = elem[1]
 
-	cmd_string += args[0]
+
+	cmd += args[0]
 	
+	seed = optional_args.get('replay', time.time())
+	random.seed(seed)
+
 	ctr = 1
-	
 	while (ctr < len(args)):
 		if (args[ctr] == "--fuzz-string"):
-			cmd_string += " " + GenerateFuzzString(args[ctr+1])
+			cmd += " " + GenerateFuzzString(args[ctr+1])
 			ctr+=2
 		elif (args[ctr] == "--fuzz-file"):
-			cmd_string += " " + GenerateFuzzFile(args[ctr+1])
+			cmd += " " + GenerateFuzzFile(args[ctr+1])
 			ctr+=2
 		else:
-			cmd_string += " " + args[ctr]
+			cmd += " " + args[ctr]
 			ctr+=1 
 	
-	FuzzProgram(optional_args, cmd_string)			
+	FuzzProgram(optional_args, cmd)			
 
 if __name__ == "__main__":
 	ParseArguments(sys.argv[1:])
