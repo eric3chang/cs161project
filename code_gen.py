@@ -58,7 +58,7 @@ def output(symbol):
 	return
 
 def getFuzzInput(spec, seed):
-	random.seed(seed)
+	#random.seed(seed)
 	global totalOutput
 	totalOutput = ''
 	produce(startSym)
