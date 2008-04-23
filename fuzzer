@@ -37,13 +37,14 @@ def MonitorForkedProcess(pObj, optional_args):
 	
 
 def GenerateFuzzString(fuzz_string_spec):
-	fuzz = getFuzzInput('postscript')
+	global seed
+	fuzz = code_gen.getFuzzInput('postscript', seed)
 	print fuzz
 	return fuzz
 
 def GenerateFuzzFile(fuzz_file_spec):
-	#global getFuzzInput
-	fuzz = code_gen.getFuzzInput('postscript')
+	global seed
+	fuzz = code_gen.getFuzzInput('postscript', seed)
 	print fuzz
 	return "./dummy_file"
 
@@ -57,12 +58,15 @@ def timeTest(time, proc):
 	proc.wait()
 	timer.cancel()
 
-def FuzzProgram(opts, cmd):
-	trials = opts.get('trials', 1)
+def FuzzProgram(opts, args):
+	global seed
+	trials = int(opts.get('trials', 1))
 	for trial in xrange(0, trials):
-		seed = opts.get('replay', time.time())
+		seed = float(opts.get('replay', time.time()))
 		random.seed(seed)
 		
+		cmd = generateFuzz(args)
+
 		print "Issuing Command: " + cmd
 		proc = Popen(cmd, shell=True)
 		
@@ -82,18 +86,21 @@ def ParseArguments(argv):
 	optionals, args = getopt.getopt(argv, "hu", ["replay=", "timeout-fail=", "trials=", "timeout-ok="])
 	optional_args = {}
 	main_args = {}
-	cmd = ''
-
 	for elem in optionals:
 		optional_args[elem[0][2:]] = elem[1]
 
 
-	cmd += args[0]
+#	cmd += args[0]
 	
-	seed = optional_args.get('replay', time.time())
+	seed = float(optional_args.get('replay', time.time()))
 	random.seed(seed)
+	cmd = generateFuzz(args)
 
+	FuzzProgram(optional_args, args)
+
+def generateFuzz(args):
 	ctr = 1
+	cmd = args[0]
 	while (ctr < len(args)):
 		if (args[ctr] == "--fuzz-string"):
 			cmd += " " + GenerateFuzzString(args[ctr+1])
@@ -104,8 +111,8 @@ def ParseArguments(argv):
 		else:
 			cmd += " " + args[ctr]
 			ctr+=1 
-	
-	FuzzProgram(optional_args, cmd)			
+	return cmd
+
 
 if __name__ == "__main__":
 	ParseArguments(sys.argv[1:])
