@@ -16,6 +16,11 @@ from threading import Timer
 
 fileTrial = -1
 seed = 0.0
+debug = False
+replay = False
+trials = False
+timeoutOk = False
+timeoutFail = False
 supported_file_specs = ['postscript']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'ps-file']
 
@@ -47,11 +52,12 @@ def GenerateFuzzString(fuzz_string_spec):
 		raise "Unsupported SPEC for --fuzz-string option"
 
 	fuzz = code_gen.getFuzzInput('postscript', seed)
-	#print fuzz
+	if (debug):
+		print "Fuzz input: " + fuzz
 	return fuzz
 
 def GenerateFuzzFile(fuzz_file_spec):
-	global seed
+	global seed, debug, replay, trials, timeoutOk, timeoutFail
 	global fileTrial
 	global supported_file_specs
 
@@ -61,6 +67,8 @@ def GenerateFuzzFile(fuzz_file_spec):
 		raise "Unsupported SPEC for --fuzz-file option"
 
 	fuzz = code_gen.getFuzzInput('postscript', seed)
+	if (debug):
+		print "Fuzz input: " + fuzz
 	fd = open("./fuzz_input_file" + str(fileTrial), 'w')
 	fd.write(fuzz)
 	return "./fuzz_input_file" + str(fileTrial)
@@ -75,66 +83,79 @@ def timeTest(time, proc):
 	proc.wait()
 	timer.cancel()
 
-def FuzzProgram(opts, args, replay=False):
-	global seed
+def FuzzProgram(opts, args):
+	global seed, debug, replay, trials, timeoutOk, timeoutFail
 	global fileTrial
-	trials = int(opts.get('trials', 2000000000))
-	timeoutOk = True
+	numTrials = int(opts.get('trials', 2000000000))
 
-	# Consider timeouts to be failures
-	if opts.has_key("timeout-fail"):
-		timeoutOk = False
+	# Check debugging
+        if (debug):
+		print "Debugging is ON!\n"
+	
+	# Check for replay flag fo number of trials
+	if replay:
+		replay = True
+		numTrials = 1
 
-	if opts.has_key('replay'):
-		trials = 1
-
-	for trial in xrange(0, trials):
-		seed = float(opts.get('replay', time.time()))
+	for trial in xrange(0, numTrials):
+		if trial != 0:
+			seed = random.random()
+		#else:
+		#	seed = float(opts.get('replay')) #, random.random())) #time.time()))
 		random.seed(seed)
 		fileTrial = -1
 
 		cmd = generateFuzz(args)
 
+		#print if debugging
+		if (debug):
+			print "Debug Command: " + cmd + "\n"
 		if (replay):
-			print cmd
+			print "Replay Command: " + cmd + "\n"
 
 		proc = Popen(cmd, shell=True)
 		
-		if opts.has_key("timeout-fail"):
+		if timeoutFail:
 			timeTest(int(opts['timeout-fail']), proc)
-		elif opts.has_key("timeout-ok"):
+		elif timeoutOk:
 			timeTest(int(opts['timeout-ok']), proc)
 		else:
 			proc.wait()
 
 		MonitorForkedProcess(proc, opts)
 	
-		#print proc.returncode
+		#print seed if needed
 		if proc.returncode == -11 or (proc.returncode == -15 and not timeoutOk):
 			print seed
 			return
 
 def ParseArguments(argv):
-	global seed
-	optionals, args = getopt.getopt(argv, "hu", ["replay=", "timeout-fail=", "trials=", "timeout-ok="])
+	global seed, debug, replay, trials, timeoutOk, timeoutFail
+	optionals, args = getopt.getopt(argv, "hu", ["replay=", "debug", "timeout-fail=", "trials=", "timeout-ok="])
 	optional_args = {}
-	main_args = {}
-	replayArg = False
 
+	#get optional args
 	for elem in optionals:
 		optional_args[elem[0][2:]] = elem[1]
 
+	#set all global flags
+	if optional_args.has_key("debug"):
+		debug = True
+	if optional_args.has_key("trials"):
+		trials = True
+	if optional_args.has_key("replay"):
+		replay = True
+	if optional_args.has_key("timeout-ok"):
+		timeoutOk = True
+	if optional_args.has_key("timeout-fail"):
+		timeoutFail = True
 
-#	cmd += args[0]
-	
+	# set seed
 	seed = float(optional_args.get('replay', time.time()))
 	random.seed(seed)
-	cmd = generateFuzz(args)
-
-	if (optional_args.has_key('replay')):
-		replayArg = True
 	
-	FuzzProgram(optional_args, args, replay=replayArg)
+	# call fuzz program
+	FuzzProgram(optional_args, args)
 
 def generateFuzz(args):
 	ctr = 1
