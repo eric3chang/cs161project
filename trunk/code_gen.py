@@ -1,7 +1,7 @@
 import random
+import cStringIO
 
 file_handle = open("./ex_grm.dat")
-
 grammar_lines = file_handle.readlines()
 
 
@@ -9,7 +9,7 @@ nonTerminalSymbols = {}
 terminalSymbols = {}
 target = nonTerminalSymbols
 startSym = None
-totalOutput = ''
+totalOutput = None
 
 for line in grammar_lines:
 	if "TERMINALS" in line:
@@ -43,30 +43,34 @@ for key in nonTerminalSymbols.keys():
 
 def produce(sym):
 	terminal = terminalSymbols.get(sym)
-	if terminal:
-		output(terminal[0] + ' ')
-	else:
+
+	if not terminal:
 		productions = nonTerminalSymbols[sym]
 		production = random.choice(productions)
 		for symbol in production.split():
 			produce(symbol)
+	
+	elif terminal[0] == '\\n':
+		output('\n')
+	
+	else:
+		output(terminal[0] + ' ')
+
 	return
 
 def output(symbol):
 	global totalOutput
-	totalOutput += str(symbol)
+	totalOutput.write(str(symbol))
 	return
 
 def getFuzzInput(spec, seed):
-	#random.seed(seed)
 	global totalOutput
-	totalOutput = ''
+	totalOutput = cStringIO.StringIO()
 	produce(startSym)
 	if spec=='postscript':
-		return totalOutput
+		return totalOutput.getvalue()
 
 '''
 print "\nNow producing..."
 print getFuzzInput('postscript')
 '''
-
