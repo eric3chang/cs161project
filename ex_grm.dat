@@ -1,7 +1,7 @@
 START -> BLOCK ~ 1.0;
 
 BLOCK -> STATEMENT NEWLINE BLOCK ~ 1.1 | 
-	 STATEMENT NEWLINE ~ 1;
+	 STATEMENT NEWLINE STACK ~ 1;
 
 STATEMENT -> TWO_ARG_OPERATION ~ 1;
 
@@ -24,10 +24,14 @@ OPERATION -> ADDITION ~ 1 |
              SQRT ~ 1 | 
              SUBTRACTION ~ 1; 
 
-----------
+NUMBER -> INTEGER ~ 1 |
+	  REAL ~ 1;
 
-NUMBER -> 9;
-NEWLINE -> \n;
+----------
+STACK -> stack;
+INTEGER -> ~int~;
+REAL -> ~real~;
+NEWLINE -> ~newline~;
 ADDITION -> add;
 COPY -> copy;
 DIVISION -> div;
