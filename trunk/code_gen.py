@@ -90,8 +90,24 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		for symbol in production[0].split():
 			Produce(symbol, nt_prod_map, t_prod_map)
 
-	elif terminal == '\\n':
+	elif terminal == '~newline~':
 		OutputCharacters('\n')
+
+	elif terminal == '~int~':
+		randInt = int(random.random() * 1024 * 1024 * 1024 * 2 - 1)
+		
+		if (random.random() > 0.5):
+			randInt = randInt * -1 
+
+		OutputCharacters(str(randInt) + ' ')
+
+	elif terminal == '~real~':
+		randFloat = random.random() * (1024.0 * 1024.0 * 1024.0 * 2 - 1)
+
+		if (random.random() > 0.5):
+			randFloat = randFloat * -1.0
+
+		OutputCharacters(str(randFloat) + ' ')
 
 	else:
 		OutputCharacters(terminal + ' ')
