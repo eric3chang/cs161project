@@ -3,6 +3,7 @@ import cStringIO
 
 totalOutput = None
 startSym = None
+totalSumDict = None
 
 def ParseTerminals(grammar_section):
 	unstripped_t_prods = grammar_section.split(";")
@@ -49,7 +50,7 @@ def ParseNonTerminals(grammar_section):
 			prod_info, probability = possible_prod.split("~")
 			prods.append((prod_info.strip(), float(probability.strip())))
 
-		nt_prod_map[symbol_name] = prods
+		nt_prod_map[symbol_name] = tuple(prods)
 	
 	return nt_prod_map
 
@@ -60,14 +61,22 @@ def ReadGrammarFile(filename):
 
 
 def ChooseRandomProduction(productions):
-	randomNumber = random.random()
-	runningSum = 0.0
+	global totalSumDict
+	totalSum = 0
+	runningSum = 0
+
+	if not totalSumDict.has_key(productions):
+		for elem in productions:
+			totalSum = totalSum + elem[1]
+		totalSumDict[productions] = totalSum
+	
+	randomNumber = float(random.random() * totalSumDict[productions])
 
 	for elem in productions:
 		runningSum = runningSum + elem[1]
-		
+
 		if runningSum > randomNumber:
-			return elem
+			return elem	
 
 	return productions[len(productions) - 1]
 
@@ -96,6 +105,8 @@ def OutputCharacters(sym):
 	
 def getFuzzInput(spec, seed):
 	global totalOutput 
+	global totalSumDict
+	totalSumDict = {}
 	totalOutput = cStringIO.StringIO()
 	grammar_sections = ReadGrammarFile("./ex_grm.dat")
 	nt_prod_map = ParseNonTerminals(grammar_sections[0])
