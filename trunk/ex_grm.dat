@@ -1,28 +1,28 @@
 START -> BLOCK ~ 1.0;
 
-BLOCK -> STATEMENT NEWLINE BLOCK ~ 0.5 | 
-	 STATEMENT NEWLINE ~ 0.5;
+BLOCK -> STATEMENT NEWLINE BLOCK ~ 1.1 | 
+	 STATEMENT NEWLINE ~ 1;
 
-STATEMENT -> NUMBER ~ 0.125 | 
-	     NUMBER OPERATION ~ 0.125 | 
-	     NUMBER NUMBER OPERATION ~ 0.125 | 
-  	     OPERATION ~ 0.125 | 
-             NUMBER STATEMENT ~ 0.125 | 
-	     NUMBER OPERATION STATEMENT ~ 0.125 | 
-	     NUMBER NUMBER OPERATION STATEMENT ~ 0.125 | 
-	     OPERATION STATEMENT ~ 0.125;
- 
-OPERATION -> ADDITION ~ 0.111 | 
-	     COPY ~ 0.111 | 
-             DIVISION ~ 0.111 | 
-             EXP ~ 0.111 | 
-             INDEX ~ 0.111 | 
-             LOG  ~ 0.111| 
-             MARK ~ 0.111 | 
-             MULTIPLICATION ~ 0.111 | 
-             ROLL ~ 0.111 | 
-             SQRT ~ 0.111 | 
-             SUBTRACTION ~ 0.112; 
+STATEMENT -> TWO_ARG_OPERATION ~ 1;
+
+TWO_ARG_OPERATION -> NUMBER NUMBER ADDITION ~ 20 |
+		     NUMBER NUMBER SUBTRACTION ~ 20 |
+		     NUMBER NUMBER DIVISION ~ 20 |
+		     NUMBER NUMBER MULTIPLICATION ~ 20 |
+		     NUMBER NUMBER EXP ~ 20;
+		     
+
+OPERATION -> ADDITION ~ 1 | 
+	     COPY ~ 1 | 
+             DIVISION ~ 1 | 
+             EXP ~ 1 | 
+             INDEX ~ 1 | 
+             LOG  ~ 1| 
+             MARK ~ 1 | 
+             MULTIPLICATION ~ 1 | 
+             ROLL ~ 1 | 
+             SQRT ~ 1 | 
+             SUBTRACTION ~ 1; 
 
 ----------
 
