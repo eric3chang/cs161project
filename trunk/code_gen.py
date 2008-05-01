@@ -109,7 +109,7 @@ def Produce(sym, nt_prod_map, t_prod_map):
 
 		OutputCharacters(str(randFloat) + ' ')
 
-	elif terminal == ~string~:
+	elif terminal == '~string~':
 		randStr = ""
 		chars = string.letters + string.digits
 		

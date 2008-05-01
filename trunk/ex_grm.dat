@@ -42,5 +42,6 @@ MARK -> mark;
 MULTIPLICATION -> mul;
 ROLL -> roll;
 SQRT -> sqrt;
+STRING -> ~string~;
 SUBTRACTION -> sub;
 
