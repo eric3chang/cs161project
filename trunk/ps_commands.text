@@ -1,4 +1,4 @@
-// already added into grammar
+// already added into grammar - Adarsh
 add
 copy
 div
@@ -10,7 +10,17 @@ roll
 sqrt
 sub
 
+=
+save
+restore
+bind
+null
+gsave
+grestore
+
 // not yet added into the grammer
+
+//Manu
 cleartomark
 array
 [
@@ -27,6 +37,11 @@ astore
 forall
 dict
 length
+stroke
+showpage
+show
+
+//Mike
 begin
 end
 def
@@ -49,13 +64,8 @@ cvn
 cvr
 cvrs
 print
-=
-save
-restore
-bind
-null
-gsave
-grestore
+
+//Eric
 setlinecap
 setlinejoin
 setmiterlimit
@@ -80,7 +90,5 @@ charpath
 clippath
 pathforall
 clip
-stroke
-showpage
-show
+
 
