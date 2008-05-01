@@ -109,6 +109,15 @@ def Produce(sym, nt_prod_map, t_prod_map):
 
 		OutputCharacters(str(randFloat) + ' ')
 
+	elif terminal == ~string~:
+		randStr = ""
+		chars = string.letters + string.digits
+		
+		for i in range(8):
+			randStr = randStr + choice(chars)
+
+		OutputCharacters(randStr + " ")
+			
 	else:
 		OutputCharacters(terminal + ' ')
 
