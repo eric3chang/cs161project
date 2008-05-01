@@ -110,9 +110,10 @@ def FuzzProgram(opts, args):
 		#print if debugging
 		if (debug):
 			print "Debug Command: " + cmd + "\n"
-		if (replay):
+		if (replay and debug):
 			print "Replay Command: " + cmd + "\n"
-
+		elif (replay):
+			print cmd
 		proc = Popen(cmd, shell=True)
 		
 		if timeoutFail:

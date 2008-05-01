@@ -1,74 +1,105 @@
 import random
 import cStringIO
 
-file_handle = open("./ex_grm.dat")
-grammar_lines = file_handle.readlines()
-
-
-nonTerminalSymbols = {}
-terminalSymbols = {}
-target = nonTerminalSymbols
-startSym = None
 totalOutput = None
+startSym = None
 
-for line in grammar_lines:
-	if "TERMINALS" in line:
-		target = terminalSymbols
-		continue
+def ParseTerminals(grammar_section):
+	unstripped_t_prods = grammar_section.split(";")
+	t_prods = []
+	t_prod_map = {}
 
-	elif "TERMINAL" in line or line == '\n':
-		continue
+	for elem in unstripped_t_prods:
+		t_prods.append(elem.strip())
 
+	for elem in t_prods:
+		prod_tuple = elem.split("->")
 
-	prod_def = line.split(" -> ")
-	target[prod_def[0]] = []
+		if len(prod_tuple) == 1:
+			break
 
-	if startSym == None:
-		startSym = prod_def[0]
+		symbol_name = prod_tuple[0].strip()
+		t_prod_map[symbol_name] = prod_tuple[1].strip()
+
+	return t_prod_map
 	
-	for production in prod_def[1].split(" | "):
-		target[prod_def[0]].append(production.strip())
+def ParseNonTerminals(grammar_section):
+	global startSym
+	unstripped_nt_prods = grammar_section.split(";")
+	nt_prods = []
+	nt_prod_map = {}
 
-'''
-print "Start Symbol: " + startSym
+	for elem in unstripped_nt_prods:
+		nt_prods.append(elem.strip())
 
-print "Terminal Symbols:"
-for key in terminalSymbols.keys():
-	print str(key) + " , " + str(terminalSymbols[key])
+	for elem in nt_prods:
+		prod_tuple = elem.split("->")
+		
+		if len(prod_tuple) == 1:
+			break
 
-print "Non-Terminal Symbols:"
-for key in nonTerminalSymbols.keys():
-        print str(key) + " , " + str(nonTerminalSymbols[key])
-'''
+		symbol_name = prod_tuple[0].strip()
 
-def produce(sym):
-	terminal = terminalSymbols.get(sym)
+		if not startSym:
+			startSym = symbol_name
+		
+		prods = []
+		
+		for possible_prod in prod_tuple[1].split("|"):
+			prod_info, probability = possible_prod.split("~")
+			prods.append((prod_info.strip(), float(probability.strip())))
+
+		nt_prod_map[symbol_name] = prods
+	
+	return nt_prod_map
+
+def ReadGrammarFile(filename):
+	fd = open(filename, 'r')
+	grammar_sections = fd.read().split("----------")
+	return grammar_sections
+
+
+def ChooseRandomProduction(productions):
+	randomNumber = random.random()
+	runningSum = 0.0
+
+	for elem in productions:
+		runningSum = runningSum + elem[1]
+		
+		if runningSum > randomNumber:
+			return elem
+
+	return productions[len(productions) - 1]
+
+
+def Produce(sym, nt_prod_map, t_prod_map):
+	terminal = t_prod_map.get(sym)
 
 	if not terminal:
-		productions = nonTerminalSymbols[sym]
-		production = random.choice(productions)
-		for symbol in production.split():
-			produce(symbol)
-	
-	elif terminal[0] == '\\n':
-		output('\n')
-	
+		productions = nt_prod_map[sym]
+		production = ChooseRandomProduction(productions)
+		for symbol in production[0].split():
+			Produce(symbol, nt_prod_map, t_prod_map)
+
+	elif terminal == '\\n':
+		OutputCharacters('\n')
+
 	else:
-		output(terminal[0] + ' ')
+		OutputCharacters(terminal + ' ')
 
 	return
 
-def output(symbol):
+def OutputCharacters(sym):
 	global totalOutput
-	totalOutput.write(str(symbol))
+	totalOutput.write(str(sym))
 	return
-
+	
 def getFuzzInput(spec, seed):
-	global totalOutput
+	global totalOutput 
 	totalOutput = cStringIO.StringIO()
-	produce(startSym)
-	if spec=='postscript':
-		return totalOutput.getvalue()
+	grammar_sections = ReadGrammarFile("./ex_grm.dat")
+	nt_prod_map = ParseNonTerminals(grammar_sections[0])
+	t_prod_map = ParseTerminals(grammar_sections[1])
+	Produce(startSym, nt_prod_map, t_prod_map)
+	return totalOutput.getvalue()	
 
-print "\nNow producing..."
-print getFuzzInput('postscript')
