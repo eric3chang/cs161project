@@ -70,7 +70,5 @@ def getFuzzInput(spec, seed):
 	if spec=='postscript':
 		return totalOutput.getvalue()
 
-'''
 print "\nNow producing..."
 print getFuzzInput('postscript')
-'''
