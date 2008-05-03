@@ -1,0 +1,1 @@
+./fuzzer --trials 10 ./pstotext-linux-x86 --fuzz-file postscript
