@@ -1,5 +1,6 @@
 import random
 import cStringIO
+import string
 
 totalOutput = None
 startSym = None
@@ -114,9 +115,9 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		chars = string.letters + string.digits
 		
 		for i in range(8):
-			randStr = randStr + choice(chars)
+			randStr = randStr + random.choice(chars)
 
-		OutputCharacters(randStr + " ")
+		OutputCharacters( '(' + randStr + ') ')
 			
 	else:
 		OutputCharacters(terminal + ' ')
