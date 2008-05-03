@@ -1,0 +1,102 @@
+setlinecap
+int setlinecap -
+Set shape of line ends for stroke (0 = butt, 1 = round, 2 = square)
+
+setlinejoin
+int setlinejoin -
+Set shape of corners for stroke (0 = miter, 1 = round, 2 = bevel)
+
+setmiterlimit
+int setmiterlimit -
+Set miter length limit
+
+setdash
+array offset setdash -
+Set dash pattern for stroking
+
+setscreen
+frequency angle proc setscreen -
+Set gray halftone screen by frequency, angle, and spot function
+frequency angle halftone setscreen -
+Set gray halftone screen from halftone dictionary
+
+settransfer
+proc settransfer -
+Set gray transfer function
+
+matrix
+matrix matrix -
+Create identity matrix
+
+setmatrix
+matrix setmatrix -
+replace CTM by matrix
+
+translate
+tx, ty translate -
+Translate user space by (tx, ty)
+tx ty matrix translate matrix
+Define translation by (tx, ty)
+
+rotate
+angle rotate -
+Rotate user space by angle degrees
+angle matrix rotate matrix -
+Define rotation by angle degrees
+
+concatmatrix
+matrix1 matrix2 matrix3 concatmatrix matrix3
+Fill matrix3 with matrix1 X matrix2
+
+invertmatrix
+matrix1 matrix2 invertmatrix matrix 2
+Fill matrix2 with inverse of matrix1
+
+newpath
+- newpath -
+Initialize current path to be empty
+
+lineto
+x y lineto -
+Append straight line to (x, y)
+
+rlineto
+dx dy rlineto -
+Perform relative linto
+
+arc
+x y r angle1 angle2 arc -
+Append counterclockwise arc
+
+arcto
+x1 y1 x2 y2 r arcto xt1 yt1 xt2 yt2
+Append tangent arc
+
+closepath
+- closepath -
+Connect subpath back to its starting point
+
+flattenpath
+- flattenpath -
+Convert curves to sequences of straight lines
+
+strokepath
+- strokepath -
+Compute outline of stroked path
+
+charpath
+string bool charpath -
+Append glyph outline to current path
+
+clippath
+- clippath -
+Set current path to clipping path
+
+pathforall
+move line curve close pathforall -
+Enumerate current path
+
+clip
+- clip -
+Clip using nonzero winding number rule
+
