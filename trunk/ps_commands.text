@@ -1,76 +1,95 @@
-Command: mark
-Description: marks the top level position on the stack by inserting an object there. For example, if I push '1 2 3 4' onto the stack, type 'mark' and then push '5 6 7 8' onto the stack, then mark is an object which exists between 4 and 5 on the stack.
-Usage: mark 
+// already added into grammar - Adarsh
+add
+copy
+div
+exp
+index
+log
+mark
+roll
+sqrt
+sub
 
-Command: cleartomark 
-Description: Given a stack, erases every element up to (and including) the mark object. If the mark object does not exist, then this is an error.
-Usage: cleartomark 
+=
+save
+restore
+bind
+null
+gsave
+grestore
 
-Command: clear
-Description: clears the stack
-Usage: clear 
+// not yet added into the grammer
 
-Command: count
-Description: counts the number of elements on the stack
-Usage: count
-
-Command: get
-Description: Gets the object located at the specified index (or key) from the top-most array (or dictionary) on the stack. Errors out if there is no array/dictionary on stack or of index is non-existant or out of bounds. After executing, the array/dict is gone and only the resulting value is on the stack.
-usage: [ARRAY] [INTEGER] get -or- [DICT] KEY get
-
-Command: length
-Description: Gets the length of the array/dict on the stack. Errors out of there is no array/dictionary at the top of the stack. After executing, the array/dict is gone and only the resulting value is on the stack.
-usage: [ARRAY] length
-
-Command: []
-Description: Creates an array w/N+1 elements and places it on the stack
-usage: [ ELEM0 ELEM1 ... ELEMN ]
-
-Command: << >>
-Description: Creates a dictionary w/N+1 elements and places it on the stack. 
-usage: <<KEY0 VAL0 KEY1 VAL1 ... KEYN VALN >>
-
-Command: aload
-Description: Takes the elements within the array and stores them onto the stack. Then puts the array back onto the top of the stack. Errors out if an array is not on top of the stack.
-usage: [ARRAY] aload
-
-Command: getinterval
-Description: Generates a new array and places it on the stack that is a "sub-array" of the previous array on the stack. The "sub-array" contains the element at "START_INDEX" and LENGTH-1 elements after that element in the previous array. Errors out if array not on top of stack of length is too big.
-usage [ARRAY] [START_INDEX] [LENGTH] getinterval
-
-Command: put
-Description: Replaces a single element of the value of an array, dictionary or string.
-usage: [ARRAY] [INDEX] [VALUE] put
-
-Command: putinterval
-Description: Replaces elements of original array with passed in value starting at INDEX.
-usage: [ARRAY] [START_INDEX] [ARRAY2] put
-
-Command: array
-Description: Creates an array of length int, each of whose elements is initialized with a null object and pushes this array on the operand stack.
-usage: [INTEGER>=0] array
-
-Command: astore
-Description: Stores objects into an already allocated array
-usage: ELEM1 ELEM2 ... ELEMN [ARRAY] astore
-
-Command: dict
-Description: Instantiates a dict w/initial size 'N'
-usage: N dict
-
-Command: forall
-Description: Goes through all the elements of ARRAY and applies procedure. Sort of like accumulate in LISP
-USAGE: [INIT_VALUE] [ARRAY] [PROC] forall
-
-COMMAND: show
-Description: Paints the characters identified by elements of string of operand
-usage: [STRING] show
+//Manu
+cleartomark
+array
+[
+]
+<<
+>>
+length
+get
+put
+getinterval
+putinterval
+aload
+astore
+forall
+dict
+length
 stroke
+showpage
+show
 
-COMMAND: showpage
-Description: Transmits current page to output device - no effect for monitor
-usage: showpage
+//Mike
+begin
+end
+def
+load
+store
+string
+search
+token
+gt
+lt
+exec
+if
+ifelse
+for
+execstack
+cvlit
+cvx
+cvi
+cvn
+cvr
+cvrs
+print
 
-COMMAND: stroke
-Description: paints a line following the current path and using the current color. 
-usage: stroke
+//Eric
+setlinecap
+setlinejoin
+setmiterlimit
+setdash
+setscreen
+settransfer
+matrix
+setmatrix
+translate
+rotate
+concatmatrix
+invertmatrix
+newpath
+lineto
+rlineto
+arc
+arcto
+closepath
+flattenpath
+strokepath
+charpath
+clippath
+pathforall
+clip
+
+
+
