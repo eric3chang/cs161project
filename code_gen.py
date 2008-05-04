@@ -95,11 +95,15 @@ def Produce(sym, nt_prod_map, t_prod_map):
 	elif terminal == '~newline~':
 		OutputCharacters('\n')
 
+	elif terminal == '~nat~':
+		randNat = int(rando.random() * 1024)
+		OutputCharacters(str(randNat) + ' ')
+
 	elif terminal == '~int~':
 		randInt = int(rando.random() * 1024)
 		
-		#if (rando.random() > 0.5):
-		#	randInt = randInt * -1 
+		if (rando.random() > 0.5):
+			randInt = randInt * -1 
 
 		OutputCharacters(str(randInt) + ' ')
 
