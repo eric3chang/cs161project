@@ -1,4 +1,12 @@
 // added
+arc
+x y r angle1 angle2 arc -
+Append counterclockwise arc
+
+arcto
+x1 y1 x2 y2 r arcto xt1 yt1 xt2 yt2
+Append tangent arc
+
 clip
 - clip -
 Clip using nonzero winding number rule
@@ -23,6 +31,10 @@ invertmatrix
 matrix1 matrix2 invertmatrix matrix 2
 Fill matrix2 with inverse of matrix1
 
+lineto
+x y lineto -
+Append straight line to (x, y)
+
 matrix
 matrix matrix
 Create a 6x6 identity matrix and pushes it onto the stack
@@ -31,6 +43,10 @@ matrix -> [1.0 0.0 0.0 1.0 0.0 0.0]
 newpath
 - newpath -
 Initialize current path to be empty
+
+rlineto
+dx dy rlineto -
+Perform relative lineto
 
 rotate
 angle rotate -
@@ -54,6 +70,12 @@ strokepath
 - strokepath -
 Compute outline of stroked path
 
+translate
+tx, ty translate -
+Translate user space by (tx, ty)
+tx ty matrix translate matrix
+Define translation by (tx, ty)
+
 
 // not added
 
@@ -74,28 +96,6 @@ Set gray halftone screen from halftone dictionary
 settransfer
 proc settransfer -
 Set gray transfer function
-
-translate
-tx, ty translate -
-Translate user space by (tx, ty)
-tx ty matrix translate matrix
-Define translation by (tx, ty)
-
-lineto
-x y lineto -
-Append straight line to (x, y)
-
-rlineto
-dx dy rlineto -
-Perform relative linto
-
-arc
-x y r angle1 angle2 arc -
-Append counterclockwise arc
-
-arcto
-x1 y1 x2 y2 r arcto xt1 yt1 xt2 yt2
-Append tangent arc
 
 charpath
 string bool charpath -
