@@ -1,4 +1,33 @@
 // added
+clip
+- clip -
+Clip using nonzero winding number rule
+
+clippath
+- clippath -
+Set current path to clipping path
+
+closepath
+- closepath -
+Connect subpath back to its starting point
+
+concatmatrix
+matrix1 matrix2 matrix3 concatmatrix matrix3
+Fill matrix3 with matrix1 X matrix2
+
+flattenpath
+- flattenpath -
+Convert curves to sequences of straight lines
+
+invertmatrix
+matrix1 matrix2 invertmatrix matrix 2
+Fill matrix2 with inverse of matrix1
+
+matrix
+matrix matrix
+Create a 6x6 identity matrix and pushes it onto the stack
+matrix -> [1.0 0.0 0.0 1.0 0.0 0.0]
+
 newpath
 - newpath -
 Initialize current path to be empty
@@ -16,6 +45,14 @@ Set shape of line ends for stroke (0 = butt, 1 = round, 2 = square)
 setlinejoin
 int setlinejoin -
 Set shape of corners for stroke (0 = miter, 1 = round, 2 = bevel)
+
+setmatrix
+matrix setmatrix -
+replace Current Transformation Matrix by matrix
+
+strokepath
+- strokepath -
+Compute outline of stroked path
 
 
 // not added
@@ -38,27 +75,11 @@ settransfer
 proc settransfer -
 Set gray transfer function
 
-matrix
-matrix matrix -
-Create identity matrix
-
-setmatrix
-matrix setmatrix -
-replace CTM by matrix
-
 translate
 tx, ty translate -
 Translate user space by (tx, ty)
 tx ty matrix translate matrix
 Define translation by (tx, ty)
-
-concatmatrix
-matrix1 matrix2 matrix3 concatmatrix matrix3
-Fill matrix3 with matrix1 X matrix2
-
-invertmatrix
-matrix1 matrix2 invertmatrix matrix 2
-Fill matrix2 with inverse of matrix1
 
 lineto
 x y lineto -
@@ -76,31 +97,12 @@ arcto
 x1 y1 x2 y2 r arcto xt1 yt1 xt2 yt2
 Append tangent arc
 
-closepath
-- closepath -
-Connect subpath back to its starting point
-
-flattenpath
-- flattenpath -
-Convert curves to sequences of straight lines
-
-strokepath
-- strokepath -
-Compute outline of stroked path
-
 charpath
 string bool charpath -
 Append glyph outline to current path
-
-clippath
-- clippath -
-Set current path to clipping path
 
 pathforall
 move line curve close pathforall -
 Enumerate current path
 
-clip
-- clip -
-Clip using nonzero winding number rule
 
