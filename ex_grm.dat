@@ -1,34 +1,42 @@
 START -> BLOCK ~ 1.0;
 
-BLOCK -> STATEMENT NEWLINE BLOCK ~ 9 | 
+BLOCK -> STATEMENT NEWLINE BLOCK ~ 20 | 
 	 STATEMENT NEWLINE STACK ~ 1;
 
 STATEMENT -> ARITHMETIC_STATEMENT ~ 1 |
 	     ARRAY_STATEMENT ~ 1 |
 	     DICT_STATEMENT ~ 1 |
-	     COUNT ~ 0.25;
+	     COUNT ~ 0.25 |
+	     MARK ~ 0.25 |
+	     CLEARTOMARK ~ 0.25 |
+	     CLEAR ~ 0.25 |
+	     SHOWPAGE ~ 0.1 |
+	     STROKE ~ 0.1 |
+	     INTEGER INTEGER MOVETO STRING SHOW ~ 0.1;
 
 ARITHMETIC_STATEMENT -> NUMBER NUMBER ADDITION ~ 20 |
 		     NUMBER NUMBER SUBTRACTION ~ 20 |
 		     NUMBER NUMBER DIVISION ~ 20 |
 		     NUMBER NUMBER MULTIPLICATION ~ 20 |
 		     NUMBER NUMBER EXP ~ 20;
-		     
+	     
 ARRAY_STATEMENT -> ARRAY_DECL LENGTH ~ 1 |
 		   ARRAY_DECL ALOAD ~ 1 |
-		   ARRAY_DECL ZERO ONE GETINTERVAL ~ 1 |
-		   ARRAY_DECL ZERO GET ~ 1 |
+		   ARRAY_DECL ZERO INTEGER GETINTERVAL ~ 1 |
+		   ARRAY_DECL INTEGER GET ~ 1 |
 		   ARRAY_DECL ZERO NUMBER PUT ~ 1 |
-		   SEVEN ARRAY ~ 1;
+		   ARRAY_DECL ZERO LB ELEMS RB PUTINTERVAL ~1 | 
+		   INTEGER INT_ARRAY_DECL LBRK OPERATION RBRK FORALL ~ 1; 
 
 DICT_STATEMENT -> DICT_DECL LENGTH ~ 1;
 
-
 DICT_DECL -> DICT_LEFT KEY_VAL_PAIRS DICT_RIGHT ~ 8 |
-	     SEVEN DICT ~ 1;
+	     INTEGER DICT ~ 1;
+
+INT_ARRAY_DECL -> LB INT_ELEMS RB ~ 1;
 
 ARRAY_DECL -> LB ELEMS RB ~ 8 |
-	      SEVEN ARRAY ~ 1;
+	      INTEGER ARRAY ~ 1;
 
 KEY_VAL_PAIRS -> KEY_VAL_PAIR KEY_VAL_PAIRS ~ 8 |
 	         KEY_VAL_PAIR ~ 1;
@@ -40,15 +48,13 @@ ELEMS -> STRING ELEMS ~ 3 |
 	STRING ~ 1 | 
 	NUMBER ~ 1;
 
+INT_ELEMS -> NUMBER INT_ELEMS ~ 3 |
+	    NUMBER ~ 1;
+
 OPERATION -> ADDITION ~ 1 | 
-	     COPY ~ 1 | 
              DIVISION ~ 1 | 
              EXP ~ 1 | 
-             INDEX ~ 1 | 
-             LOG  ~ 1 | 
-             MARK ~ 1 | 
              MULTIPLICATION ~ 1 | 
-             ROLL ~ 1 | 
              SQRT ~ 1 | 
              SUBTRACTION ~ 1; 
 
@@ -66,6 +72,7 @@ SIX -> 6;
 SEVEN -> 7;
 EIGHT -> 8;
 NINE -> 9;
+THOUSAND -> 1000;
 STACK -> stack;
 INTEGER -> ~int~;
 REAL -> ~real~;
@@ -93,6 +100,17 @@ COUNT -> count;
 GETINTERVAL -> getinterval;
 ARRAY -> array;
 PUT -> put;
+PUTINTERVAL -> putinterval;
 DICT_LEFT -> <<;
 DICT_RIGHT -> >>;
 DICT -> dict;
+ASTORE -> astore;
+FORALL -> forall;
+LBRK -> {;
+RBRK -> };
+CLEARTOMARK -> cleartomark;
+CLEAR -> clear;
+SHOWPAGE -> showpage;
+STROKE -> stroke;
+MOVETO -> moveto;
+SHOW -> show;
