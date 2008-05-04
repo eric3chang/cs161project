@@ -153,7 +153,7 @@ def ParseArguments(argv):
 
 	# set seed
 	seed = float(optional_args.get('replay', time.time()))
-	random.seed(seed)
+	#random.seed(seed)
 	
 	# call fuzz program
 	FuzzProgram(optional_args, args)

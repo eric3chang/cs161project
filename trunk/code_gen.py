@@ -132,6 +132,7 @@ def OutputCharacters(sym):
 def getFuzzInput(spec, seed):
 	global totalOutput 
 	global totalSumDict
+	random.seed(seed)
 	totalSumDict = {}
 	totalOutput = cStringIO.StringIO()
 	grammar_sections = ReadGrammarFile("./ex_grm.dat")
