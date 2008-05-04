@@ -118,6 +118,7 @@ NINE -> 9;
 THOUSAND -> 1000;
 STACK -> stack;
 INTEGER -> ~int~;
+NATURAL -> ~nat~;
 REAL -> ~real~;
 NEWLINE -> ~newline~;
 MULTIPLICATION -> mul;
