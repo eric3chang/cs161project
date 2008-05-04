@@ -25,7 +25,6 @@ timeoutFail = False
 supported_file_specs = ['postscript']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'ps-file']
 
-print str(rando)
 
 def PrintUsage():
 	print "Incorrect Usage"
