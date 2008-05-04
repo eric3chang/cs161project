@@ -1,0 +1,13 @@
+echo "=================================================================="
+echo "RUNNING for 15 MINUTE"
+
+if [ $# -eq 1 ]
+then
+	echo "IGNORING BUGS $1"
+	echo "=================================================================="
+    ./fuzzer --timeout-ok 900 ./pstotext-linux-x86 -ignore $1 --fuzz-file postscript
+else
+	echo "=================================================================="
+	./fuzzer --timeout-ok 900 ./pstotext-linux-x86 --fuzz-file postscript
+fi
+echo "------------------------------------------------------------------"
