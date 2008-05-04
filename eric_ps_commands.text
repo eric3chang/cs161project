@@ -54,6 +54,10 @@ Rotate user space by angle degrees
 angle matrix rotate matrix -
 Define rotation by angle degrees
 
+setdash
+array offset setdash -
+Set dash pattern for stroking
+
 setlinecap
 int setlinecap -
 Set shape of line ends for stroke (0 = butt, 1 = round, 2 = square)
@@ -82,10 +86,6 @@ Define translation by (tx, ty)
 setmiterlimit
 int setmiterlimit -
 Set miter length limit
-
-setdash
-array offset setdash -
-Set dash pattern for stroking
 
 setscreen
 frequency angle proc setscreen -

@@ -48,12 +48,14 @@ PAINT_STATEMENT -> NUMBER NUMBER NUMBER NUMBER NUMBER ARC ~ 1 |
 		   NUMBER NUMBER MOVETO NUMBER NUMBER LINETO ~ 1 |
 		   NEWPATH ~ 1 |
 		   NUMBER NUMBER MOVETO NUMBER NUMBER RLINETO ~ 1 |
+		   ARRAY_DECL NUMBER SETDASH ~ 1 |
 		   LINE_NUM SETLINECAP ~ 1 |
 		   LINE_NUM SETLINEJOIN ~ 1 |
 		   STROKEPATH ~ 1;
 			 
 TRANSFORM_STATEMENT ->	NUMBER ROTATE ~ 1 |
-			NUMBER NUMBER TRANSLATE ~ 1;
+			NUMBER NUMBER TRANSLATE ~ 1 |
+			NUMBER NUMBER MATRIX TRANSLATE ~ 1;
 
 STACK_STATEMENT -> NATURAL COPY ~ 20 |
 		     NATURAL INDEX ~ 20 |
@@ -130,6 +132,7 @@ CLIP -> clip;
 CLIPPATH -> clippath;
 CLOSEPATH -> closepath;
 CONCATMATRIX -> concatmatrix;
+CURRENTHALFTONE -> currenthalftone;
 DIVISION -> div;
 EXP -> exp;
 FLATTENPATH -> flattenpath;
@@ -144,9 +147,12 @@ NEWPATH -> newpath;
 RLINETO -> rlineto;
 ROLL -> roll;
 ROTATE -> rotate;
+SETDASH -> setdash;
 SETLINECAP -> setlinecap;
 SETLINEJOIN -> setlinejoin;
 SETMATRIX -> setmatrix;
+SETMITERLIMIT -> setmiterlimit;
+SETSCREEN -> setscreen;
 SQRT -> sqrt;
 STRING -> ~string~;
 STROKEPATH -> strokepath;
@@ -184,4 +190,12 @@ BIND -> bind;
 NULL -> null;
 GSAVE -> gsave;
 GRESTORE -> grestore;
-ARCTO -> arcto;
+FACTORIAL -> /factorial { 1 dict begin
+/n exch def
+n 0 eq {
+1
+}{
+n n 1 sub factorial mul
+} ifelse
+end } def;
+
