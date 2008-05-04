@@ -1,4 +1,5 @@
 import cStringIO
+import string
 
 totalOutput = None
 startSym = None
@@ -70,7 +71,6 @@ def ChooseRandomProduction(productions):
 		for elem in productions:
 			totalSum = totalSum + elem[1]
 		totalSumDict[productions] = totalSum
-	print 'rando is ' + str(rando)
 	randomNumber = rando.random() * totalSumDict[productions]
 
 	for elem in productions:
@@ -116,7 +116,7 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		chars = string.letters + string.digits
 		
 		for i in range(8):
-			randStr = randStr + choice(chars)
+			randStr = randStr + rando.choice(chars)
 
 		OutputCharacters(randStr + " ")
 			
