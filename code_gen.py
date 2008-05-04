@@ -96,15 +96,15 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		OutputCharacters('\n')
 
 	elif terminal == '~int~':
-		randInt = int(rando.random() * 1024 * 1024 * 1024 * 2 - 1)
+		randInt = int(rando.random() * 1024)
 		
-		if (rando.random() > 0.5):
-			randInt = randInt * -1 
+		#if (rando.random() > 0.5):
+		#	randInt = randInt * -1 
 
 		OutputCharacters(str(randInt) + ' ')
 
 	elif terminal == '~real~':
-		randFloat = rando.random() * (1024.0 * 1024.0 * 1024.0 * 2 - 1)
+		randFloat = rando.random() * 1024.0 
 
 		if (rando.random() > 0.5):
 			randFloat = randFloat * -1.0
@@ -118,7 +118,7 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		for i in range(8):
 			randStr = randStr + rando.choice(chars)
 
-		OutputCharacters('(' + randStr + ") ")
+		OutputCharacters('(' + randStr + ') ')
 			
 	else:
 		OutputCharacters(terminal + ' ')

@@ -18,8 +18,7 @@ STATEMENT -> ARITHMETIC_STATEMENT ~ 1 |
 	     STROKE ~ 0.1 |
 	     INTEGER INTEGER MOVETO STRING SHOW ~ 0.1 |
 	     EQUALS ~ 0.1 |
-	     SAVE ~ 0.1 |
-	     RESTORE ~ 0.1 |
+	     SAVE BLOCK RESTORE ~ 0.1 |
 	     BIND ~ 0.1 |
 	     NULL ~ 0.1 |
 	     GSAVE ~ 0.1 |
