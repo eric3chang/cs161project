@@ -183,3 +183,4 @@ BIND -> bind;
 NULL -> null;
 GSAVE -> gsave;
 GRESTORE -> grestore;
+ARCTO -> arcto;
