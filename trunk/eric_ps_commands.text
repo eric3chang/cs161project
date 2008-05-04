@@ -1,3 +1,14 @@
+// added
+newpath
+- newpath -
+Initialize current path to be empty
+
+rotate
+angle rotate -
+Rotate user space by angle degrees
+angle matrix rotate matrix -
+Define rotation by angle degrees
+
 setlinecap
 int setlinecap -
 Set shape of line ends for stroke (0 = butt, 1 = round, 2 = square)
@@ -5,6 +16,9 @@ Set shape of line ends for stroke (0 = butt, 1 = round, 2 = square)
 setlinejoin
 int setlinejoin -
 Set shape of corners for stroke (0 = miter, 1 = round, 2 = bevel)
+
+
+// not added
 
 setmiterlimit
 int setmiterlimit -
@@ -38,12 +52,6 @@ Translate user space by (tx, ty)
 tx ty matrix translate matrix
 Define translation by (tx, ty)
 
-rotate
-angle rotate -
-Rotate user space by angle degrees
-angle matrix rotate matrix -
-Define rotation by angle degrees
-
 concatmatrix
 matrix1 matrix2 matrix3 concatmatrix matrix3
 Fill matrix3 with matrix1 X matrix2
@@ -51,10 +59,6 @@ Fill matrix3 with matrix1 X matrix2
 invertmatrix
 matrix1 matrix2 invertmatrix matrix 2
 Fill matrix2 with inverse of matrix1
-
-newpath
-- newpath -
-Initialize current path to be empty
 
 lineto
 x y lineto -
