@@ -1,0 +1,38 @@
+strokepath 
+matrix matrix matrix concatmatrix 
+309 rotate 
+-101.575672061 rotate 
+77.352163117 516 sub 
+[ 391 -262.170352084 ] 0 [ (wb4iU8kt) (4Ysx90di) (RAUmNQxx) 753 -142.956041768 504.739898165 ] putinterval 
+623 rotate 
+save << (36Txz8iJ) 20 408.025491523 382.546668733 869 324.615651913 (JsnXhq6v) (crKHuzz9) 891 (HM6cWPxg) 53.2444558854 1004 (CWpCYdNE) (mEgz8Scr) (FdGLbTVO) 473 631.319707173 -758.272100899 (mAKKgmAb) (ZEWHwsRB) (HCAlGSnt) (DtE83yVF) 818.375708714 403 (xCLr4f8v) (jyqIFEZB) (dTA7c5kP) 470 -44.2525922696 (60qAxme0) -594.766655099 (TFcukwqL) (K2imTZ8T) (ZRSS0xCy) 256 (qHZe1BWL) (yXCkML5Z) (6VqnWfPt) -444.609741192 (ZJ7yVUC6) -741.060419038 (m86DNIy7) -298.19397619 (fbgJApql) (1QAcAnPb) (R43dP2fJ) 268.250536381 (ztpDD5mU) (H0te5pbT) (jtSDAmug) 864 643 (m4Q7WczD) -30.9512027901 (7XU7yama) (PXCTUIj8) 86 304.222936768 (zWQLMUVR) (ecWDOI4d) 754 (RsNhgiEL) 716 473 -872.653965004 (waVROLhV) (JPvMzzlz) (Ge8AOKcl) 14 (DbJq1rJ6) >> length 
+<< 420 930 (OYZc8u7K) (AQ869L92) (o6kxxsG7) -637.683973799 -287.243732432 (HTvqQlPy) (G5F26x4m) -500.255930663 (HCEQ0t74) 851 -455.308402703 (88VQL2lx) (fSlstuB6) 91 (8shb8MQG) 165 -361.707653753 755.713772231 (qrEnBdL1) 481 645 -992.819954023 >> length 
+2 setlinejoin 
+-732.995471688 73.9446313476 exp 
+save 
+matrix matrix matrix concatmatrix 
+mark 
+closepath 
+396 201 exp 
+608 index 
+559 log 
+bind 
+<< (sStNRXqs) -805.608161867 (s4NNX3F8) -709.52621923 871.158798656 (YptPL2ia) (BLARnQeM) (cIho6AIn) 23 (55kttfoV) >> length 
+matrix setmatrix 
+clear 
+null 
+<< (UoF52tMy) 196 465 90.3807592507 (nfAtbyQ3) -155.809166498 (S9CRstk7) (lIY0Ywq4) 834.997471049 (hGDXsUSr) >> length 
+-664.207081506 rotate 
+stack restore 
+553 copy 
+-902.963599361 -1009.20491258 mul 
+308 array 0 2 getinterval 
+pop 
+503 -243.719198756 div 
+[ (NwlGk6vm) (QkIlHH1s) 0 ] length 
+closepath 
+matrix matrix matrix concatmatrix 
+262 copy 
+clip 
+cleartomark 
+stack 
