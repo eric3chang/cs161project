@@ -14,6 +14,7 @@ import code_gen
 from subprocess import Popen
 from threading import Timer
 
+rando = random.Random()
 fileTrial = -1
 seed = 0.0
 debug = False
@@ -24,6 +25,7 @@ timeoutFail = False
 supported_file_specs = ['postscript']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'ps-file']
 
+print str(rando)
 
 def PrintUsage():
 	print "Incorrect Usage"
@@ -45,13 +47,13 @@ def MonitorForkedProcess(pObj, optional_args):
 	# print message
 
 def GenerateFuzzString(fuzz_string_spec):
-	global seed
+	global rando #, seed
 	global supported_string_specs
 
 	if not fuzz_string_spec in supported_string_specs:
 		raise "Unsupported SPEC for --fuzz-string option"
-
-	fuzz = code_gen.getFuzzInput('postscript', seed)
+	print 'GenerateFuzzString rando is ' + str(rando)
+	fuzz = code_gen.getFuzzInput('postscript', rando)
 	if (debug):
 		print "Fuzz input: " + fuzz
 	return fuzz
@@ -66,12 +68,11 @@ def GenerateFuzzFile(fuzz_file_spec):
 	if not fuzz_file_spec in supported_file_specs:
 		raise "Unsupported SPEC for --fuzz-file option"
 
-	fuzz = code_gen.getFuzzInput('postscript', seed)
+	fuzz = code_gen.getFuzzInput('postscript', rando)
 	if (debug):
 		print "Fuzz input: " + fuzz
 	fd = open("./fuzz_input_file" + str(fileTrial), 'w')
 	fd.write(fuzz)
-	fd.close()
 	return "./fuzz_input_file" + str(fileTrial)
 
 def killProc(pid):
@@ -85,7 +86,7 @@ def timeTest(time, proc):
 	timer.cancel()
 
 def FuzzProgram(opts, args):
-	global seed, debug, replay, trials, timeoutOk, timeoutFail
+	global rando, seed, debug, replay, trials, timeoutOk, timeoutFail
 	global fileTrial
 	numTrials = int(opts.get('trials', 2000000000))
 
@@ -100,8 +101,10 @@ def FuzzProgram(opts, args):
 
 	for trial in xrange(0, numTrials):
 		if trial != 0:
-			seed = random.random()
-
+			seed = rando.random()
+		#else:
+		#	seed = float(opts.get('replay')) #, rando.random())) #time.time()))
+		rando.seed(seed)
 		fileTrial = -1
 
 		cmd = generateFuzz(args)
@@ -130,7 +133,7 @@ def FuzzProgram(opts, args):
 			return
 
 def ParseArguments(argv):
-	global seed, debug, replay, trials, timeoutOk, timeoutFail
+	global rando, seed, debug, replay, trials, timeoutOk, timeoutFail
 	optionals, args = getopt.getopt(argv, "hu", ["replay=", "debug", "timeout-fail=", "trials=", "timeout-ok="])
 	optional_args = {}
 
@@ -152,7 +155,7 @@ def ParseArguments(argv):
 
 	# set seed
 	seed = float(optional_args.get('replay', time.time()))
-	#random.seed(seed)
+	rando.seed(seed)
 	
 	# call fuzz program
 	FuzzProgram(optional_args, args)

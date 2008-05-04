@@ -1,10 +1,10 @@
-import random
 import cStringIO
-import string
 
 totalOutput = None
 startSym = None
 totalSumDict = None
+
+rando = None
 
 def ParseTerminals(grammar_section):
 	unstripped_t_prods = grammar_section.split(";")
@@ -62,7 +62,7 @@ def ReadGrammarFile(filename):
 
 
 def ChooseRandomProduction(productions):
-	global totalSumDict
+	global rando, totalSumDict
 	totalSum = 0
 	runningSum = 0
 
@@ -70,8 +70,8 @@ def ChooseRandomProduction(productions):
 		for elem in productions:
 			totalSum = totalSum + elem[1]
 		totalSumDict[productions] = totalSum
-	
-	randomNumber = float(random.random() * totalSumDict[productions])
+	print 'rando is ' + str(rando)
+	randomNumber = rando.random() * totalSumDict[productions]
 
 	for elem in productions:
 		runningSum = runningSum + elem[1]
@@ -83,6 +83,7 @@ def ChooseRandomProduction(productions):
 
 
 def Produce(sym, nt_prod_map, t_prod_map):
+	global rando
 	terminal = t_prod_map.get(sym)
 
 	if not terminal:
@@ -95,18 +96,18 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		OutputCharacters('\n')
 
 	elif terminal == '~int~':
-		randInt = int(random.random() * 1024 - 1)
+		randInt = int(rando.random() * 1024 * 1024 * 1024 * 2 - 1)
 		
-		#if (random.random() > 0.5):
-		#	randInt = randInt * -1 
+		if (rando.random() > 0.5):
+			randInt = randInt * -1 
 
 		OutputCharacters(str(randInt) + ' ')
 
 	elif terminal == '~real~':
-		randFloat = random.random() * (1024.0 - 1)
+		randFloat = rando.random() * (1024.0 * 1024.0 * 1024.0 * 2 - 1)
 
-		#if (random.random() > 0.5):
-		#	randFloat = randFloat * -1.0
+		if (rando.random() > 0.5):
+			randFloat = randFloat * -1.0
 
 		OutputCharacters(str(randFloat) + ' ')
 
@@ -115,9 +116,9 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		chars = string.letters + string.digits
 		
 		for i in range(8):
-			randStr = randStr + random.choice(chars)
+			randStr = randStr + choice(chars)
 
-		OutputCharacters( '(' + randStr + ') ')
+		OutputCharacters(randStr + " ")
 			
 	else:
 		OutputCharacters(terminal + ' ')
@@ -129,16 +130,15 @@ def OutputCharacters(sym):
 	totalOutput.write(str(sym))
 	return
 	
-def getFuzzInput(spec, seed):
-	global totalOutput 
+def getFuzzInput(spec, rand):
+	global rando, totalOutput 
 	global totalSumDict
+	rando = rand
 	totalSumDict = {}
 	totalOutput = cStringIO.StringIO()
 	grammar_sections = ReadGrammarFile("./ex_grm.dat")
 	nt_prod_map = ParseNonTerminals(grammar_sections[0])
 	t_prod_map = ParseTerminals(grammar_sections[1])
-	random.seed(seed)
-	#print "Seed used to generate input: " + str(seed)
 	Produce(startSym, nt_prod_map, t_prod_map)
 	return totalOutput.getvalue()	
 
