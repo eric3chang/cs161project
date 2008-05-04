@@ -118,7 +118,7 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		for i in range(8):
 			randStr = randStr + rando.choice(chars)
 
-		OutputCharacters(randStr + " ")
+		OutputCharacters('(' + randStr + ") ")
 			
 	else:
 		OutputCharacters(terminal + ' ')
