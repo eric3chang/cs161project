@@ -132,12 +132,13 @@ def OutputCharacters(sym):
 def getFuzzInput(spec, seed):
 	global totalOutput 
 	global totalSumDict
-	random.seed(seed)
 	totalSumDict = {}
 	totalOutput = cStringIO.StringIO()
 	grammar_sections = ReadGrammarFile("./ex_grm.dat")
 	nt_prod_map = ParseNonTerminals(grammar_sections[0])
 	t_prod_map = ParseTerminals(grammar_sections[1])
+	random.seed(seed)
+	#print "Seed used to generate input: " + str(seed)
 	Produce(startSym, nt_prod_map, t_prod_map)
 	return totalOutput.getvalue()	
 

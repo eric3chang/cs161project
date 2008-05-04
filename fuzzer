@@ -71,6 +71,7 @@ def GenerateFuzzFile(fuzz_file_spec):
 		print "Fuzz input: " + fuzz
 	fd = open("./fuzz_input_file" + str(fileTrial), 'w')
 	fd.write(fuzz)
+	fd.close()
 	return "./fuzz_input_file" + str(fileTrial)
 
 def killProc(pid):
@@ -100,9 +101,7 @@ def FuzzProgram(opts, args):
 	for trial in xrange(0, numTrials):
 		if trial != 0:
 			seed = random.random()
-		#else:
-		#	seed = float(opts.get('replay')) #, random.random())) #time.time()))
-		random.seed(seed)
+
 		fileTrial = -1
 
 		cmd = generateFuzz(args)
