@@ -1,0 +1,120 @@
+START -> BLOCK ~ 1.0;
+
+BLOCK -> STATEMENT NEWLINE BLOCK ~ 9 | 
+	 STATEMENT NEWLINE STACK ~ 1;
+
+STATEMENT -> ARITHMETIC_STATEMENT ~ 1 |
+	     ARRAY_STATEMENT ~ 1 |
+	     DICT_STATEMENT ~ 1 |
+	     COUNT ~ 0.25;
+
+ARITHMETIC_STATEMENT -> NUMBER NUMBER ADDITION ~ 20 |
+		     NUMBER NUMBER SUBTRACTION ~ 20 |
+		     NUMBER NUMBER DIVISION ~ 20 |
+		     NUMBER NUMBER MULTIPLICATION ~ 20 |
+		     NUMBER NUMBER EXP ~ 20;
+		     
+ARRAY_STATEMENT -> ARRAY_DECL LENGTH ~ 1 |
+		   ARRAY_DECL ALOAD ~ 1 |
+		   ARRAY_DECL ZERO ONE GETINTERVAL ~ 1 |
+		   ARRAY_DECL ZERO GET ~ 1 |
+		   ARRAY_DECL ZERO NUMBER PUT ~ 1 |
+		   SEVEN ARRAY ~ 1;
+
+DICT_STATEMENT -> DICT_DECL LENGTH ~ 1;
+
+
+DICT_DECL -> DICT_LEFT KEY_VAL_PAIRS DICT_RIGHT ~ 8 |
+	     SEVEN DICT ~ 1;
+
+ARRAY_DECL -> LB ELEMS RB ~ 8 |
+	      SEVEN ARRAY ~ 1;
+
+KEY_VAL_PAIRS -> KEY_VAL_PAIR KEY_VAL_PAIRS ~ 8 |
+	         KEY_VAL_PAIR ~ 1;
+
+KEY_VAL_PAIR -> STRING NUMBER ~ 1;
+
+ELEMS -> STRING ELEMS ~ 3 | 
+	NUMBER ELEMS ~ 3 | 
+	STRING ~ 1 | 
+	NUMBER ~ 1;
+
+OPERATION -> ADDITION ~ 1 | 
+	     COPY ~ 1 | 
+             DIVISION ~ 1 | 
+             EXP ~ 1 | 
+             INDEX ~ 1 | 
+             LOG  ~ 1 | 
+             MARK ~ 1 | 
+             MULTIPLICATION ~ 1 | 
+             ROLL ~ 1 | 
+             SQRT ~ 1 | 
+             SUBTRACTION ~ 1; 
+
+NUMBER -> INTEGER ~ 1 |
+	  REAL ~ 1;
+
+----------
+ZERO -> 0;
+ONE -> 1;
+TWO -> 2;
+THREE -> 3;
+FOUR -> 4;
+FIVE -> 5;
+SIX -> 6;
+SEVEN -> 7;
+EIGHT -> 8;
+NINE -> 9;
+STACK -> stack;
+INTEGER -> ~int~;
+REAL -> ~real~;
+NEWLINE -> ~newline~;
+ADDITION -> add;
+COPY -> copy;
+DIVISION -> div;
+EXP -> exp;
+INDEX -> index;
+LOG -> log;
+MARK -> mark;
+MULTIPLICATION -> mul;
+ROLL -> roll;
+SQRT -> sqrt;
+STRING -> ~string~;
+SUBTRACTION -> sub;
+LB -> [;
+RB -> ];
+LP -> (;
+RP -> );
+LENGTH -> length;
+ALOAD -> aload;
+GET -> get;
+COUNT -> count;
+GETINTERVAL -> getinterval;
+ARRAY -> array;
+PUT -> put;
+DICT_LEFT -> <<;
+DICT_RIGHT -> >>;
+DICT -> dict;
+
+----
+THINGS THAT OVERLAP WITH THE ORIGINAL ex_grm.dat
+
+STATEMENT -> NEWPATH ~ 0.25
+----
+START OF ERIC'S STUFF
+
+
+LINE_STATEMENT -> LINE_NUM SETLINECAP | 
+		LINE_NUM SETLINEJOIN
+
+LINE_NUM -> ZERO | ONE | TWO
+
+ROTATE_STATEMENT -> NUMBER ROTATE
+
+------------
+
+NEWPATH -> newpath
+SETLINECAP -> setlinecap;
+SETLINEJOIN -> setlinejoin;
+
