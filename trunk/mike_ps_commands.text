@@ -1,0 +1,199 @@
+//Mike
+begin: dict begin
+pertains to dictionaries
+pushes dict on the dictionary stack, making it the current dictionary and installing it as the first of the dictionaries consulted during implicit name lookup and by def, load, store, and where.
+ERRORS: dictstackoverflow, invalidaccess, stackunderflow, typecheck
+
+end: end
+pertains to dictionaries
+pops the current dictionary off the dictionary stack, making the dictionary below it the current dictionary. If end tries to pop the bottommost instance of userdict, it executes the error dictstackunderflow.
+ERRORS: dictstackunderflow 
+
+
+def: def key value def
+pertains to dictionaries
+associates key with value in the current dictionary-the one on the top of the dictionary stack . If key is already present in the current dictionary, def simply replaces its value. Otherwise, def creates a new entry for key and stores value with it.
+If the current dictionary is in global VM and value is a composite object whose value is in local VM, an invalidaccess error occurs .
+EXAMPLE:
+/ncnt 1 def % Define ncnt to be 1 in current
+dict
+/ncnt ncnt 1 add def % ncnt now has value 2
+ERRORS: dictfull, invalidaccess, limitcheck, stackunderflow, typecheck, VMerror
+
+
+load: key load value
+pertains to dictionaries
+searches for key in each dictionary on the dictionary stack, starting with the topmost (current) dictionary. If key is found in some dictionary, load pushes the associated value on the operand stack. If key is not found in any dictionary on the dictionary stack, load executes the error undefined.
+load looks up key the same way the interpreter looks up executable names that it encounters during execution. However, load always pushes the associated value on the operand stack; it never executes that value.
+EXAMPLE:
+/avg {add 2 div} def
+/avg load -> {add 2 div}
+ERRORS: invalidaccess, stackunderflow, typecheck, undefined 
+
+
+store: store
+pertains to dictionaries
+searches for key in each dictionary on the dictionary stack, starting with the topmost (current) dictionary. If key is found in some dictionary, store replaces its value by the value operand. If key is not found in any dictionary on the dictionary stack, store creates a new entry with key and value in the current dictionary. If the chosen dictionary is in global VM and value is a composite object whose value is in local VM, an invalidaccess error occurs .
+EXAMPLE:
+/abc 123 store /abc where { } {currentdict} ifelse
+/abc 123 put
+The two lines of the example have the same effect.
+ERRORS: dictfull, invalidaccess, limitcheck, stackunderflow 
+
+
+string: int string string
+pertains to strings
+creates a string of length int, each of whose elements is initialized with the integer 0, and pushes this string on the operand stack.
+The int operand must be a non-negative integer not greater than the maximum allowable string length . The string is allocated in local or global VM according to the current VM allocation mode.
+ERRORS: limitcheck, rangecheck, stackunderflow, typecheck, VMerror 
+search: string seek search post match pre true (if found)
+string false (if not found)
+looks for the first occurrence of the string seek within string and returns results of this search on the operand stack. The topmost result is a boolean that indicates if the search succeeded. If search finds a subsequence of string whose elements are equal to the elements of seek, it splits string into three segments: pre, the portion of string preceding the match; match, the portion of string that matches seek; and post, the remainder of string. It then pushes the string objects post, match, and pre on the operand stack, followed by the boolean true. All three of these strings are substrings sharing intervals of the value of the original string. If search does not find a match, it pushes the original string and the boolean false.
+EXAMPLE:
+(abbc) (ab) search -> (bc) (ab) ( ) true
+(abbc) (bb) search -> (c) (bb) (a) true
+(abbc) (bc) search -> ( ) (bc) (ab) true
+(abbc) (B) search -> (abbc) false
+ERRORS: invalidaccess, stackoverflow, stackunderflow, typecheck 
+
+
+token: file token any true (if found)
+false (if not found)
+string token post any true (if found)
+false (if not found)
+pertains to interpretation
+reads characters from file or string, interpreting them according to the PostScript language syntax rules, until it has scanned and constructed an entire object.
+In the file case, token normally pushes the scanned object followed by true. If token reaches end-of-file before encountering any characters besides white space, it closes file and returns false.
+In the string case, token normally pushes post (the substring of string beyond the portion consumed by token), the scanned object, and true. If token reaches the end of string before encountering any characters besides white space, it simply returns false.
+In either case, the any result is an ordinary object. It may be simple-an integer, real, or name-or composite-a string bracketed by (...) or a procedure bracketed by {...}. The object returned by token is the same as the object that would be encountered by the interpreter if the file or string were executed directly. However, token scans just a single object and it always pushes that object on the operand stack rather than executing it.
+token consumes all characters of the token and sometimes the terminating character as well. If the token is a name or a number followed by a white-space character, token consumes the white-space character (only the first one if there are several). If the token is terminated by a special character that is part of the token-one of ), >, ], or }-token consumes that character, but no following ones. If the token is terminated by a special character that is part of the next token-one of /, (, <, [, or {-token does not consume that character, but leaves it in the input sequence. If the token is a binary token or a binary object sequence, token consumes no additional characters.
+EXAMPLE:
+(15(St1) {1 2 add}) token -> ((St1) {1 2 add}) 15 true
+((St1) {1 2 add}) token -> ( {1 2 add}) (St1) true
+( {1 2 add}) token -> ( ) {1 2 add} true
+( ) token -> false
+ERRORS: invalidaccess, ioerror, limitcheck, stackoverflow, stackunderflow, syntaxerror, typecheck, undefinedresult, VMerror 
+
+
+gt: num1 num2 gt bool
+string1 string2 gt bool
+pertains to logic (with numbers and strings)
+pops two objects from the operand stack and pushes the boolean value
+true if the first operand is greater than the second, false otherwise. If both operands are numbers, gt compares their mathematical values. If both operands are strings, gt compares them element by element, treating the elements as integers in the range 0 to 255, to determine whether the first string is lexically greater than the second. If the operands are of other types or one is a string and the other is a number, gt executes the typecheck error.
+ERRORS: invalidaccess, stackoverflow, typecheck 
+
+lt: num1 num2 lt bool
+string1 string2 lt bool
+pertains to logic (with numbers and strings)
+pops two objects from the operand stack and pushes the boolean value true if the first operand is less than the second, false otherwise. If both operands are numbers, lt compares their mathematical values. If both operands are strings, lt compares them element by element (treating the elements as integers in the range 0 to 255) to determine whether the first string is lexically less than the second. If the operands are of other types or one is a string and the other is a number, lt executes the typecheck error.
+ERRORS: invalidaccess, stackunderflow, typecheck 
+
+exec: file exec
+string exec -
+pertains to interpretation
+causes the contents of file (open for reading) or string to be read and then executed
+ERRORS: dictstackoverflow, invalidaccess, invalidfileaccess, limitcheck, stackunderflow, typecheck 
+
+
+
+if: bool proc if -
+pertains to logic
+removes both operands from the stack, then executes proc if bool is true. The if operator pushes no results of its own on the operand stack, but the proc may do so.
+EXAMPLE:
+3 4 lt {(3 is less than 4)} if -> (3 is less than 4)
+ERRORS: stackunderflow, typecheck
+
+ifelse: bool proc1 proc2 ifelse -
+pertains to logic
+removes all three operands from the stack, then executes proc1 if bool is true or proc2 if bool is false. The ifelse operator pushes no results of its own on the operand stack, but the procedure it executes may do so.
+EXAMPLE:
+4 3 lt {(TruePart)} {(FalsePart)} ifelse -> (FalsePart) % Since 4 is not less than 3
+ERRORS: stackunderflow, typecheck 
+
+for: initial increment limit proc for - 
+pertains to logic
+executes proc repeatedly, passing it a sequence of values from initial by steps of increment to limit. The for operator expects initial, increment, and limit to be numbers. It maintains a temporary internal variable, known as the control variable, which it first sets to initial. Then, before each repetition, it compares the control variable with the termination value limit. If limit has not been exceeded, it pushes the control variable on the operand stack, executes proc, and adds increment to the control variable.
+The termination condition depends on whether increment is positive or negative. If increment is positive, for terminates when the control variable becomes greater than limit. If increment is negative, for terminates when the control variable becomes less than limit. If initial meets the termination condition, for does not execute proc at all. If proc executes the exit operator, for terminates prematurely.
+Usually, proc will use the value on the operand stack for some purpose. However, if proc does not remove the value, it will remain there. Successive executions of proc will cause successive values of the control variable to accumulate on the operand stack.
+EXAMPLE:
+0 1 1 4 {add} for -> 10
+1 2 6 { } for -> 1 3 5
+3 -.5 1 {-> } for -> 3.0 2.5 2.0 1.5 1.0
+In the first example, the value of the control variable is added to whatever is on the stack, so 1, 2, 3, and 4 are added in turn to a running sum whose initial value is 0. The second example has an empty procedure, so the successive values of the control variable are left on the stack. The last example counts backward from 3 to 1 by halves, leaving the successive values on the stack.
+Beware of using reals instead of integers for any of the first three operands. Most real numbers are not represented exactly. This can cause an error to accumulate in the value of the control variable, with possibly surprising results. In particular, if the difference between initial and limit is a multiple of increment, as in the third line of the example, the control variable may not achieve the limit value.
+ERRORS: stackoverflow stackunderflow, typecheck 
+
+
+execstack: array execstack subarray
+pertains to interpretation
+stores all elements of the execution stack into array and returns an object describing the initial n-element subarray of array, where n is the current depth of the execution stack. execstack copies the topmost object into element n-1 of array and the bottommost one into element 0 of array. The execution stack itself is unchanged.
+If the length of array is less than the depth of the execution stack, execstack executes a rangecheck error.
+ERRORS: invalidaccess, rangecheck, stackunderflow, typecheck 
+
+
+cvlit: any cvlit any
+pertains to type conversion
+(convert to literal) makes the object on the top of the operand stack have the literal instead of executable attribute.
+ERRORS: stackunderflow 
+
+
+cvx: any cvx any
+pertains to type conversion
+(convert to executable) makes the object on top of the operand stack have the executable instead of literal attribute.
+ERRORS: stackunderflow 
+
+
+cvi: num cvi int
+string cvi int
+pertains to type conversion
+(convert to integer) takes an integer, real, or string object from the stack and produces an integer result. If the operand is an integer, cvi simply returns it. If the operand is a real, it truncates any fractional part (i.e., rounds it toward 0) and converts it to an integer. If the operand is a string, it interprets the characters of the string as a number according to the PostScript syntax rules. If that number is a real, cvi converts it to an integer. cvi executes a rangecheck error if a real is too large to convert to an integer. (See the round, truncate, floor, and ceiling operators, which remove fractional parts without performing type conversion.)
+EXAMPLE:
+(3.3E1) cvi -> 33
+-47.8 cvi -> -47
+520.9 cvi -> 520
+ERRORS: invalidaccess, rangecheck, stackunderflow, syntaxerror, typecheck, undefinedresult
+
+
+cvn: num cvi int
+string cvi int
+pertains to type conversion
+(convert to integer) takes an integer, real, or string object from the stack and produces an integer result. If the operand is an integer, cvi simply returns it. If the operand is a real, it truncates any fractional part (i.e., rounds it toward 0) and converts it to an integer. If the operand is a string, it interprets the characters of the string as a number according to the PostScript syntax rules. If that number is a real, cvi converts it to an integer. cvi executes a rangecheck error if a real is too large to convert to an integer. (See the round, truncate, floor, and ceiling operators, which remove fractional parts without performing type conversion.)
+EXAMPLE:
+(3.3E1) cvi -> 33
+-47.8 cvi -> -47
+520.9 cvi -> 520
+ERRORS: invalidaccess, rangecheck, stackunderflow, syntaxerror, typecheck, undefinedresult
+
+
+cvr: num cvr real
+string cvr real 
+pertains to tyoe conversion
+converts number on stack to a real
+ERRORS: invalidaccess, limitcheck, stackunderflow, syntaxerror, typecheck, undefinedresult
+
+cvrs: num radix string cvrs substring
+pertains to type conversion
+(convert to string with radix) produces a text representation of the number num in the specified radix, stores the text into the supplied string (overwriting some initial portion of its value), and returns a string object designating the substring actually used. If string is too small to hold the result of the conversion, cvrs executes the error rangecheck.
+If radix is 10, cvrs produces the same result as cvs when applied to either an integer or a real. That is, it produces a signed integer or real token that conforms to the PostScript language syntax for that number.
+If radix is not 10, cvrs converts num to an integer, as if by cvi. Then it treats the machine representation of that integer as an unsigned positive integer and converts it to text form according to the specific radix. The resulting text is not necessarily a valid number. However, if it is immediately preceded by the same radix and #, the combination is a valid PostScript language token that represents the same number.
+EXAMPLE:
+/temp 12 string def
+123 10 temp cvrs -> (123)
+-123 10 temp cvrs -> (-123)
+123.4 10 temp cvrs -> (123.4)
+123 16 temp cvrs -> (7B)
+-123 16 temp cvrs -> (FFFFFF85)
+123.4 16 temp cvrs -> (7B)
+ERRORS: invalidaccess, rangecheck, stackunderflow, typecheck 
+
+print: string print
+pertains to writing output
+writes the characters of string to the standard output file. The print operator provides the simplest means to send text to an application or an interactive user. Note that print is a file operator that has nothing to do with painting character shapes on the current page (see show) or with sending the current page to a raster output device (see showpage).
+ERRORS: invalidaccess, ioerror, stackunderflow, typecheck 
+
+
+http://www.google.com/search?hl=en&as_q=&as_epq=&as_oq=&as_eq=&num=100&lr=&as_filetype=ps&ft=i&as_sitesearch=&as_qdr=all&as_rights=&as_occt=any&cr=&as_nlo=&as_nhi=&safe=images
+
+http://www.google.com/search?q=+filetype:ps&num=100&hl=en&lr=&as_qdr=all&start=100&sa=N
+
+http://www.google.com/search?q=+filetype:ps&num=100&hl=en&lr=&as_qdr=all&start=200&sa=N
