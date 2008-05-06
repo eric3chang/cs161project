@@ -14,7 +14,6 @@ import code_gen
 from subprocess import Popen
 from threading import Timer
 
-rando = random.Random()
 fileTrial = -1
 seed = 0.0
 debug = False
@@ -46,15 +45,17 @@ def MonitorForkedProcess(pObj, optional_args):
 	# print message
 
 def GenerateFuzzString(fuzz_string_spec):
-	global rando #, seed
+	global seed
 	global supported_string_specs
 
 	if not fuzz_string_spec in supported_string_specs:
 		raise "Unsupported SPEC for --fuzz-string option"
-	print 'GenerateFuzzString rando is ' + str(rando)
-	fuzz = code_gen.getFuzzInput('postscript', rando)
+	
+	fuzz = code_gen.getFuzzInput('postscript', seed)
+
 	if (debug):
 		print "Fuzz input: " + fuzz
+	
 	return fuzz
 
 def GenerateFuzzFile(fuzz_file_spec):
@@ -67,7 +68,7 @@ def GenerateFuzzFile(fuzz_file_spec):
 	if not fuzz_file_spec in supported_file_specs:
 		raise "Unsupported SPEC for --fuzz-file option"
 
-	fuzz = code_gen.getFuzzInput('postscript', rando)
+	fuzz = code_gen.getFuzzInput('postscript', seed)
 	if (debug):
 		print "Fuzz input: " + fuzz
 	fd = open("./fuzz_input_file" + str(fileTrial), 'w')
@@ -85,7 +86,7 @@ def timeTest(time, proc):
 	timer.cancel()
 
 def FuzzProgram(opts, args):
-	global rando, seed, debug, replay, trials, timeoutOk, timeoutFail
+	global seed, debug, replay, trials, timeoutOk, timeoutFail
 	global fileTrial
 	numTrials = int(opts.get('trials', 2000000000))
 
@@ -100,12 +101,9 @@ def FuzzProgram(opts, args):
 
 	for trial in xrange(0, numTrials):
 		if trial != 0:
-			seed = rando.random()
-		#else:
-		#	seed = float(opts.get('replay')) #, rando.random())) #time.time()))
-		rando.seed(seed)
-		fileTrial = -1
+			seed = long(time.time())
 
+		fileTrial = -1
 		cmd = generateFuzz(args)
 
 		#print if debugging
@@ -132,7 +130,7 @@ def FuzzProgram(opts, args):
 			return
 
 def ParseArguments(argv):
-	global rando, seed, debug, replay, trials, timeoutOk, timeoutFail
+	global seed, debug, replay, trials, timeoutOk, timeoutFail
 	optionals, args = getopt.getopt(argv, "hu", ["replay=", "debug", "timeout-fail=", "trials=", "timeout-ok="])
 	optional_args = {}
 
@@ -153,8 +151,7 @@ def ParseArguments(argv):
 		timeoutFail = True
 
 	# set seed
-	seed = float(optional_args.get('replay', time.time()))
-	rando.seed(seed)
+	seed = long(optional_args.get('replay', long(time.time())))
 	
 	# call fuzz program
 	FuzzProgram(optional_args, args)
