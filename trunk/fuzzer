@@ -101,7 +101,7 @@ def FuzzProgram(opts, args):
 
 	for trial in xrange(0, numTrials):
 		if trial != 0:
-			seed = long(time.time())
+			seed = long(time.time() * random.random())
 
 		fileTrial = -1
 		cmd = generateFuzz(args)
@@ -125,6 +125,7 @@ def FuzzProgram(opts, args):
 		MonitorForkedProcess(proc, opts)
 	
 		#print seed if needed
+		# print seed # solaris hack
 		if proc.returncode == -11 or (proc.returncode == -15 and not timeoutOk):
 			print seed
 			return
@@ -151,7 +152,7 @@ def ParseArguments(argv):
 		timeoutFail = True
 
 	# set seed
-	seed = long(optional_args.get('replay', long(time.time())))
+	seed = long(optional_args.get('replay', long(time.time() * random.random())))
 	
 	# call fuzz program
 	FuzzProgram(optional_args, args)

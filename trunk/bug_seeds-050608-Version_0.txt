@@ -1,0 +1,11 @@
+Bug 1: ./fuzzer --replay 1210105748 ./pstotext-linux-x86 --fuzz-file postscript
+
+Bug 5: ./fuzzer --replay 1210106769 ./pstotext-linux-x86 --fuzz-file postscript
+
+Bug 9: ./fuzzer --replay 1210106706 ./pstotext-linux-x86 --fuzz-file postscript
+
+Bug 10: ./fuzzer --replay 1210106844 ./pstotext-linux-x86 --fuzz-file postscript
+
+Bug 13: ./fuzzer --replay 1210106909 ./pstotext-linux-x86 --fuzz-file postscript
+
+Bug 17: ./fuzzer --replay 1210107574 ./pstotext-linux-x86 --fuzz-file postscript
