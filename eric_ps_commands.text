@@ -7,6 +7,10 @@ arcto
 x1 y1 x2 y2 r arcto xt1 yt1 xt2 yt2
 Append tangent arc
 
+charpath
+string bool charpath -
+Append glyph outline to current path
+
 clip
 - clip -
 Clip using nonzero winding number rule
@@ -70,6 +74,10 @@ setmatrix
 matrix setmatrix -
 replace Current Transformation Matrix by matrix
 
+setmiterlimit
+int setmiterlimit -
+Set miter length limit
+
 strokepath
 - strokepath -
 Compute outline of stroked path
@@ -83,9 +91,6 @@ Define translation by (tx, ty)
 
 // not added
 
-setmiterlimit
-int setmiterlimit -
-Set miter length limit
 
 setscreen
 frequency angle proc setscreen -
@@ -97,9 +102,6 @@ settransfer
 proc settransfer -
 Set gray transfer function
 
-charpath
-string bool charpath -
-Append glyph outline to current path
 
 pathforall
 move line curve close pathforall -
