@@ -113,6 +113,11 @@ def Produce(sym, nt_prod_map, t_prod_map):
 
 		OutputCharacters(str(randFloat) + ' ')
 
+	elif terminal == '~posreal~':
+		randFloat = random.random() * 1024
+
+		OutputCharacters(str(randFloat) + ' ')
+
 	elif terminal == '~string~':
 		randStr = ""
 		chars = string.letters + string.digits
@@ -121,9 +126,35 @@ def Produce(sym, nt_prod_map, t_prod_map):
 			randStr = randStr + random.choice(chars)
 
 		OutputCharacters('(' + randStr + ') ')
+
+	elif terminal == '~intstring~':
+		randStr = ""
+		chars = string.digits
+
+		for i in range(8):
+			randStr = randStr + random.choice(chars)
+
+		OutputCharacters('(' + randStr + ') ')
+
+	elif terminal == '~realstring~':
+		randStr = ""
+		chars = string.digits
+
+		randInt = int(random.random() * 8)
+
+		for i in range(randInt):
+			randStr = randStr + random.choice(chars)
+		
+		randStr = randStr + "."
+
+		for i in range(randInt + 1, 8):
+			randStr = randStr + random.choice(chars)
+
+		OutputCharacters('(' + randStr + ') ')
 			
 	else:
 		OutputCharacters(terminal + ' ')
+
 
 	return
 
