@@ -1070,7 +1070,7 @@ class PSDD(DD):
 #                        stderroutput = line
 #                    print '\nSTDERR '+line
             stderroutput = proc.stderr.readline()
-            print '\n^^^' + stderroutput
+            print '\n---' + stderroutput,
             m = reg.match(stderroutput)
             if m:
                 errorcode = int(m.group(1))
@@ -1080,11 +1080,15 @@ class PSDD(DD):
             proc.stderr.close()
         proc.wait()
         unrecoverable = string.find(stderroutput, 'error')
-        print '\n^>>Returncode=%d Errorcode=%d Unrecoverable=%d'% (proc.returncode, errorcode, unrecoverable)
+        print '\n^^>Returncode=%d Errorcode=%d Unrecoverable=%d'% (proc.returncode, errorcode, unrecoverable)
         if errorcode == 0:
             if unrecoverable == -1:
+                if self.verbose:
+                    print '^>PASS!'
                 return self.PASS
             return self.UNRESOLVED
+        if self.verbose:
+            print '^>FAIL!'
         return self.FAIL
             
     def __init__(self, dontIgnore=-1, tmpFile='/tmp/tmp.dd'):
@@ -1094,233 +1098,3 @@ class PSDD(DD):
         DD.__init__(self)
         self.verbose = 1#False
 
-
-if __name__ == '__main__':
-    # Test the outcome cache
-    oc_test()
-    
-    # Define our own DD class, with its own test method
-    class MyDD(DD):        
-	def _test_a(self, c):
-	    "Test the configuration C.  Return PASS, FAIL, or UNRESOLVED."
-
-	    # Just a sample
-	    # if 2 in c and not 3 in c:
-	    #	return self.UNRESOLVED
-	    # if 3 in c and not 7 in c:
-            #   return self.UNRESOLVED
-	    if 7 in c and not 2 in c:
-		return self.UNRESOLVED
-	    if 5 in c and 8 in c:
-		return self.FAIL
-	    return self.PASS
-
-	def _test_b(self, c):
-	    if c == []:
-		return self.PASS
-	    if 1 in c and 2 in c and 3 in c and 4 in c and \
-	       5 in c and 6 in c and 7 in c and 8 in c:
-		return self.FAIL
-	    return self.UNRESOLVED
-
-	def _test_c(self, c):
-            result = 1000
-            
-	    if 1 in c and 2 in c and 3 in c and 4 in c and \
-	       6 in c and 8 in c:
-                if 5 in c and 7 in c:
-                    result = self.UNRESOLVED
-                else:
-                    result = self.FAIL
-	    if 1 in c or 2 in c or 3 in c or 4 in c or \
-	       6 in c or 8 in c:
-                if result == 1000:
-                    result = self.UNRESOLVED
-            if result == 1000:
-                result = self.PASS
-            print "testing: ", self.coerce(c), "result = ", result
-            return result
-
-        def _test_d(self, c):
-            result = 1000
-
-            if len(c) == 255:
-                result = self.FAIL
-                
-            if result == 1000 and 17 in c and 31 in c and 63 in c and 129 in c:
-                result = self.UNRESOLVED
-            if result == 1000 and 1 in c and 7 in c and 11 in c and 22 in c and 41 in c and \
-               47 in c and 53 in c and 61 in c and 67 in c and 71 in c and 83 in c and 91 in c and \
-               97 in c and 101 in c and 103 in c and 111 in c and 113 in c and 121 in c and \
-               131 in c and 162 in c and 163 in c and 164 in c and 165 in c and 166 in c and \
-               167 in c and 192 in c and 197 in c and 201 in c and 203 in c and 211 in c and \
-               222 in c and 223 in c and 224 in c and 225 in c and 251 in c and 252 in c and \
-               253 in c:                
-                result = self.FAIL
-            if result == 1000:
-                result = self.PASS
-            # print "testing: ", self.coerce(c), "result = ", result
-            return result
-              
-        def _test_e(self, c):
-            if len(c) == 65535:
-                return self.FAIL
-
-            for i in c:
-                if (i % 2) == 0:
-                    return self.FAIL
-                
-            return self.PASS
-
-        def _test_f(self, c):
-            king = 0
-            romeo = 0
-            for s in c:
-                if string.find(s, "King ") > -1:
-                    king = 1
-                if string.find(s, "Romeo") > -1:
-                    romeo = 1
-            if king == 1 and romeo == 1:
-                return self.FAIL
-            return self.PASS
-
-        def _test_g(self, c):
-            reg = re.compile('BUG ([0-9]+) TRIGGERED')
-            cmd = './pstotext-solaris-sparc'
-            outputfile = 'urls.txt'
-            tmpfile = self.tmpFile #'/tmp/tmp.ps.dd'
-            cmdstr = ''
-            if 0 <= self.dontIgnore <= 19:
-                ignore = []
-                for i in xrange(0, 20):
-                    if i != self.dontIgnore:
-                        ignore.append(i)
-                ignorestr = str(ignore).strip('][').replace(' ', '')
-                cmdstr =  '%s -ignore %s %s' % (cmd, ignorestr, tmpfile)
-            else:
-                cmdstr =  '%s %s' % (cmd, tmpfile)
-            #print cmdstr
-
-            # create tmpdata
-            c_sorted = c[:]
-            c_sorted.sort()
-            tmpdata = ''
-            for tup in c_sorted:
-                tmpdata += tup[1]
-
-            #tmpdata = ''.join(c)# + '\n'
-            tmpf = open(tmpfile, 'wt')
-            try:
-            #with open(tmpfile, 'wt') as tmpf:
-                tmpf.write(tmpdata)
-            finally:
-                tmpf.close()
-            proc = Popen(cmdstr, shell=True, stderr=PIPE)
-            #    timeTest(timeout, proc)
-            #        print 'Input filehandle=' + str(proc.stdin)
-            
-            #    try:
-            #        proc.stdin.write(postscript)
-            #    except IOError:
-            #        pass
-            
-            errorcode = 0
-            stderroutput = ''
-            try:
-#                for line in proc.stderr.readlines():
-#                    if stderroutput == '':
-#                        stderroutput = line
-#                    print '\nSTDERR '+line
-                stderroutput = proc.stderr.readline()
-                print '\n^^^' + stderroutput
-                m = reg.match(stderroutput)
-                if m:
-                    errorcode = int(m.group(1))
-#            except IOError:
-#                pass
-            finally:
-                proc.stderr.close()
-            proc.wait()
-            unrecoverable = string.find(stderroutput, 'error')
-            print '\n^>>Returncode=%d Errorcode=%d Unrecoverable=%d'% (proc.returncode, errorcode, unrecoverable)
-            if errorcode == 0:
-                if unrecoverable == -1:
-                    return self.PASS
-                return self.UNRESOLVED
-            return self.FAIL
-            
-	def __init__(self, dontIgnore, tmpFile='/tmp/tmp.dd'):
-            self.tmpFile = tmpFile
-            self.dontIgnore = dontIgnore
-	    self._test = self._test_g
-            DD.__init__(self)
-            self.verbose = 1#False
-            
-                        
-    print "WYNOT - a tool for delta debugging."
-    mydd = MyDD()
-    # mydd.debug_test     = 1			# Enable debugging output
-    # mydd.debug_dd       = 1			# Enable debugging output
-    # mydd.debug_split    = 1			# Enable debugging output
-    # mydd.debug_resolve  = 1			# Enable debugging output
-
-    # mydd.cache_outcomes = 0
-    # mydd.monotony = 0
-
-    #print "Minimizing failure-inducing input..."
-    #list = range(1, 9)
-    #for i in range (1, 255):
-    #    list.append(i)
-    
-    #c = mydd.ddmax(list)
-    #print "The 1-minimal failure-inducing input is", c
-    #print "Removing any element will make the failure go away."
-    #print
-    
-    #list = ["A King there was in days of old,",\
-    #        "ere Men yet walked upon the mould.",\
-    #        "There Juliet and her Romeo,",\
-    #        "beneath the stars sat."]
-    filename = "dd.in"
-    list = [(0,'')]
-    f = open(filename, 'r')
-    try:
-#    with open(filename,'r') as f:
-        data = f.read()
-        index = 1
-        for c in data:
-            list.append((index, c))
-            index += 1
-#        for line in f.readlines():
-#            list.extend(line.split())
-#            list.append('\n')
-    finally:
-        f.close()
-
-    f = open('pre.out', 'wt')
-    try:
-#    with open('pre.out', 'wt') as f:
-        f.write(''.join([str(tup) for tup in list]))# + '\n')
-#    print ' '.join(list)
-#    sys.exit()
-    finally:
-        f.close()
-    print "Computing the failure-inducing difference..."
-#    (c, c1, c2) = mydd.dd(list)	# Invoke DD
-    c = mydd.ddmin(list)
-    print "The 1-minimal failure-inducing difference is", c
-    #   print c1, "passes,", c2, "fails"
-    c_sorted = c[:]
-    c_sorted.sort()
-
-    f = open('min.out', 'wt')
-    try:
-    #with open('min.out', 'wt') as f:
-        for tup in c_sorted:
-            f.write(tup[1])
-    finally:
-        f.close()
-
-# Local Variables:
-# mode: python
-# End:
