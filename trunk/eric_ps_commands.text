@@ -78,6 +78,10 @@ setmiterlimit
 int setmiterlimit -
 Set miter length limit
 
+settransfer
+proc settransfer -
+Set gray transfer function
+
 strokepath
 - strokepath -
 Compute outline of stroked path
@@ -89,19 +93,13 @@ tx ty matrix translate matrix
 Define translation by (tx, ty)
 
 
-// not added
-
-
+// partially added
 setscreen
 frequency angle proc setscreen -
+num1 num2 halftone setscreen
 Set gray halftone screen by frequency, angle, and spot function
 frequency angle halftone setscreen -
 Set gray halftone screen from halftone dictionary
-
-settransfer
-proc settransfer -
-Set gray transfer function
-
 
 pathforall
 move line curve close pathforall -
