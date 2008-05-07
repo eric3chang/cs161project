@@ -1,4 +1,4 @@
-import getopt, sys
+import getopt, random, sys, os
 import DD
 
 
@@ -10,7 +10,7 @@ def runDD():
     print "Delta Debugger started"
     print "Using infile=%s, outfile=%s, tempfile=%s" % (inFile, outFile, tmpFile)
 
-    mydd = MyDD(dontIgnore, tmpFile)
+    mydd = DD.PSDD(dontIgnore, tmpFile)
     # mydd.debug_test     = 1			# Enable debugging output
     # mydd.debug_dd       = 1			# Enable debugging output
     # mydd.debug_split    = 1			# Enable debugging output
@@ -34,14 +34,14 @@ def runDD():
     finally:
         f.close()
 
-    f = open('pre.out', 'wt')
-    try:
+#    f = open('pre.out', 'wt')
+#    try:
 #    with open('pre.out', 'wt') as f:
-        f.write(''.join([str(tup) for tup in list]))# + '\n')
+#        f.write(''.join([str(tup) for tup in list]))# + '\n')
 #    print ' '.join(list)
 #    sys.exit()
-    finally:
-        f.close()
+#    finally:
+#        f.close()
     print "Computing the failure-inducing difference..."
 #    (c, c1, c2) = mydd.dd(list)	# Invoke DD
     c = mydd.ddmin(list)
@@ -57,11 +57,13 @@ def runDD():
             f.write(tup[1])
     finally:
         f.close()
+    os.remove(tmpFile)
+
 
 def ParseArguments():
 	global inFile, outFile, tmpFile, dontIgnore, stringchunk
         try:
-            optionals, args = getopt.getopt(sys.argv[1:], "i:o:t:p:s", ["infile=", "outfile=", "tempfile=", "prefile=", "stringchunk"])
+            optionals, args = getopt.getopt(sys.argv[1:], "i:o:t:d:p:s", ["infile=", "outfile=", "tempfile=", "dontignore=", "prefile=", "stringchunk"])
         except getopt.GetoptError, err:
             # print help information and exit:
             print str(err) # will print something like "option -a not recognized"
@@ -69,11 +71,11 @@ def ParseArguments():
             sys.exit(2)
         inFile = 'dd.in'
         outFile = 'min.out'
-        tmpFile = '/tmp/tmp.ps.dd'
+        tmpFile = '/tmp/tmp' + str(random.randint(0, 999999999)) + '.dd'
         stringchunk = False
         dontIgnore = -1
 
-        for o, a in opts:
+        for o, a in optionals:
             if o in ("-i", "--infile"):
                 inFile = a
             elif o in ("-o", "--outfile"):
