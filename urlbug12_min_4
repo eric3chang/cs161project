@@ -1,0 +1,1 @@
+/$brkpage 4 def $brkpage{}readonly errordict/handleerror{r{}f dd}dup 0 systemdict put dup 4 $brkpage put readonly put

@@ -1,0 +1,4 @@
+save<<()0>>length[()8]aload<<save[]length
+cleartomark[()]0 8 put{}forall<<()2>>length
+1 5 exp<>length
+9 index
