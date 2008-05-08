@@ -46,7 +46,7 @@
 #from __future__ import with_statement
 from subprocess import *
 import re
-import sys
+import sys, os
 ##
 import string
 
@@ -667,6 +667,7 @@ class DD:
 	# We replace the tail recursion from the paper by a loop
 	while 1:
             tc = self.test(c)
+            #print self.pretty(c) + ' ' +tc
             assert tc == self.FAIL or tc == self.UNRESOLVED
 
             if n > len(c):
@@ -1022,30 +1023,31 @@ class DD:
 
 
 class PSDD(DD):
+    def determinePlatform(self):
+        name = os.uname()[0]
+        name = name.lower()
+        if name == 'sunos':
+            name = 'solaris'
+        cpu = os.uname()[-1]
+        if cpu in ('i686', 'i86pc'):
+            cpu = 'x86'
+        elif cpu == 'sun4u':
+            cpu = 'sparc'
+        else: # dunno what the string is for x86_64
+            cpu = 'x86_64'
+        return (name, cpu)
+    
     def _test_char(self, c):
-        reg = re.compile('BUG ([0-9]+) TRIGGERED')
-        cmd = './pstotext-solaris-sparc'
-        outputfile = 'urls.txt'
-        tmpfile = self.tmpFile #'/tmp/tmp.ps.dd'
-        cmdstr = ''
-        if 0 <= self.dontIgnore <= 19:
-            ignore = []
-            for i in xrange(0, 20):
-                if i != self.dontIgnore:
-                    ignore.append(i)
-            ignorestr = str(ignore).strip('][').replace(' ', '')
-            cmdstr =  '%s -ignore %s %s' % (cmd, ignorestr, tmpfile)
-        else:
-            cmdstr =  '%s %s' % (cmd, tmpfile)
-        #print cmdstr
+        tmpfile = self.tmpFile
         
         # create tmpdata
         c_sorted = c[:]
         c_sorted.sort()
         tmpdata = ''
-        for tup in c_sorted:
-            tmpdata += tup[1]
-            
+
+        if c:
+            for tup in c_sorted:
+                tmpdata += tup[1]
         #tmpdata = ''.join(c)# + '\n'
         tmpf = open(tmpfile, 'wt')
         try:
@@ -1053,7 +1055,7 @@ class PSDD(DD):
             tmpf.write(tmpdata)
         finally:
             tmpf.close()
-        proc = Popen(cmdstr, shell=True, stderr=PIPE)
+        proc = Popen(self.cmdstr, shell=True, stderr=PIPE)
         #    timeTest(timeout, proc)
         #        print 'Input filehandle=' + str(proc.stdin)
         
@@ -1070,8 +1072,9 @@ class PSDD(DD):
 #                        stderroutput = line
 #                    print '\nSTDERR '+line
             stderroutput = proc.stderr.readline()
-            print '\n---' + stderroutput,
-            m = reg.match(stderroutput)
+            if self.verbose:
+                print '\n---' + stderroutput,
+            m = self.reg.match(stderroutput)
             if m:
                 errorcode = int(m.group(1))
 #            except IOError:
@@ -1080,15 +1083,19 @@ class PSDD(DD):
             proc.stderr.close()
         proc.wait()
         unrecoverable = string.find(stderroutput, 'error')
-        print '\n^^>Returncode=%d Errorcode=%d Unrecoverable=%d'% (proc.returncode, errorcode, unrecoverable)
+        if self.verbose:
+            print '\n^^>Returncode=%d Errorcode=%d Unrecoverable=%d' %\
+                  (proc.returncode, errorcode, unrecoverable),
         if errorcode == 0:
             if unrecoverable == -1:
                 if self.verbose:
-                    print '^>PASS!'
+                    print ' ^>PASS!',
                 return self.PASS
             return self.UNRESOLVED
         if self.verbose:
-            print '^>FAIL!'
+            print ' ^>FAIL!',
+        if self.verbose:
+            print ''
         return self.FAIL
             
     def __init__(self, dontIgnore=-1, tmpFile='/tmp/tmp.dd'):
@@ -1098,3 +1105,17 @@ class PSDD(DD):
         DD.__init__(self)
         self.verbose = 1#False
 
+        self.reg = re.compile('BUG ([0-9]+) TRIGGERED')
+        cmd = './pstotext-%s-%s' % self.determinePlatform()
+
+        self.cmdstr = ''
+        if 0 <= self.dontIgnore <= 19:
+            ignore = []
+            for i in xrange(0, 20):
+                if i != self.dontIgnore:
+                    ignore.append(i)
+            ignorestr = str(ignore).strip('][').replace(' ', '')
+            self.cmdstr =  '%s -ignore %s %s' % (cmd, ignorestr, self.tmpFile)
+        else:
+            self.cmdstr =  '%s %s' % (cmd, self.tmpFile)
+        print self.cmdstr
