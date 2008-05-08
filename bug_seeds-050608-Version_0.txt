@@ -1,3 +1,5 @@
+these seeds no longer work as of 5/7 18:03
+
 Bug 1: ./fuzzer --replay 1210105748 ./pstotext-linux-x86 --fuzz-file postscript
 
 Bug 5: ./fuzzer --replay 1210106769 ./pstotext-linux-x86 --fuzz-file postscript
