@@ -168,7 +168,7 @@ def getFuzzInput(spec, seed):
 	global totalSumDict
 	totalSumDict = {}
 	totalOutput = cStringIO.StringIO()
-	grammar_sections = ReadGrammarFile("./ex_grm.dat")
+	grammar_sections = ReadGrammarFile("./conservative_ps.grm")
 	nt_prod_map = ParseNonTerminals(grammar_sections[0])
 	t_prod_map = ParseTerminals(grammar_sections[1])
 
