@@ -126,7 +126,7 @@ def FuzzProgram(opts, args):
 	
 		#print seed if needed
 		# print seed # solaris hack
-		if proc.returncode == -11 or (proc.returncode == -15 and not timeoutOk):
+		if proc.returncode == -11 or proc.returncode == 139 or (proc.returncode == -15 and not timeoutOk):
 			print seed
 			return
 
