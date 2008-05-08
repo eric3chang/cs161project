@@ -4,7 +4,9 @@ import random
 
 totalOutput = None
 startSym = None
-totalSumDict = None
+totalSumDict = {}
+nt_prod_map = None
+t_prod_map = None
 
 def ParseTerminals(grammar_section):
 	unstripped_t_prods = grammar_section.split(";")
@@ -166,11 +168,14 @@ def OutputCharacters(sym):
 def getFuzzInput(spec, seed):
 	global totalOutput 
 	global totalSumDict
-	totalSumDict = {}
+	global nt_prod_map
+	global t_prod_map
 	totalOutput = cStringIO.StringIO()
-	grammar_sections = ReadGrammarFile("./conservative_ps.grm")
-	nt_prod_map = ParseNonTerminals(grammar_sections[0])
-	t_prod_map = ParseTerminals(grammar_sections[1])
+	
+	if not startSym:
+		grammar_sections = ReadGrammarFile("./conservative_ps.grm")
+		nt_prod_map = ParseNonTerminals(grammar_sections[0])
+		t_prod_map = ParseTerminals(grammar_sections[1])
 
 	random.seed(seed)
 	Produce(startSym, nt_prod_map, t_prod_map)
