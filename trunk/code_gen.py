@@ -96,11 +96,11 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		OutputCharacters('\n')
 
 	elif terminal == '~nat~':
-		randNat = int(random.random() * 1024)
+		randNat = int(random.random() * 1024 * 1024)
 		OutputCharacters(str(randNat) + ' ')
 
 	elif terminal == '~int~':
-		randInt = int(random.random() * 1024)
+		randInt = int(random.random() * 1024 * 1024)
 		
 		if (random.random() > 0.5):
 			randInt = randInt * -1 
@@ -108,7 +108,7 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		OutputCharacters(str(randInt) + ' ')
 
 	elif terminal == '~real~':
-		randFloat = random.random() * 1024.0 
+		randFloat = random.random() * 1024.0 * 1024.0
 
 		if (random.random() > 0.5):
 			randFloat = randFloat * -1.0
@@ -116,15 +116,16 @@ def Produce(sym, nt_prod_map, t_prod_map):
 		OutputCharacters(str(randFloat) + ' ')
 
 	elif terminal == '~posreal~':
-		randFloat = random.random() * 1024
+		randFloat = random.random() * 1024 * 1024
 
 		OutputCharacters(str(randFloat) + ' ')
 
 	elif terminal == '~string~':
 		randStr = ""
 		chars = string.letters + string.digits
-		
-		for i in range(8):
+		numChars = int(random.random() * 16)
+
+		for i in range(numChars):
 			randStr = randStr + random.choice(chars)
 
 		OutputCharacters('(' + randStr + ') ')
@@ -132,8 +133,9 @@ def Produce(sym, nt_prod_map, t_prod_map):
 	elif terminal == '~intstring~':
 		randStr = ""
 		chars = string.digits
-
-		for i in range(8):
+		numChars = int(random.random() * 16)
+	
+		for i in range(numChars):
 			randStr = randStr + random.choice(chars)
 
 		OutputCharacters('(' + randStr + ') ')
@@ -141,15 +143,14 @@ def Produce(sym, nt_prod_map, t_prod_map):
 	elif terminal == '~realstring~':
 		randStr = ""
 		chars = string.digits
-
-		randInt = int(random.random() * 8)
-
-		for i in range(randInt):
+		numChars = int(random.random() * 16)
+	
+		for i in range(numChars):
 			randStr = randStr + random.choice(chars)
 		
 		randStr = randStr + "."
 
-		for i in range(randInt + 1, 8):
+		for i in range(randInt + 1, numChars):
 			randStr = randStr + random.choice(chars)
 
 		OutputCharacters('(' + randStr + ') ')
