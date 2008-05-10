@@ -13,10 +13,10 @@ import getopt
 
 cmd = './pstotext-solaris-x86'
 timeout = 5
-found = [1,3,5,6,7,9,10,11,12,13,14,15,16,17,18]
+found = [1,3,5,6,7,9,10,11,12,13,14,15,16,17,18,19]
 chunkSize = 100
 start = 0
-end = 15
+end = 20
 offset = 0 # scraper will start at the URL immediately after
 #the one indexed by offset ([1,100] indexing)
 
@@ -28,7 +28,7 @@ opener.addheaders = [('User-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:
 reg = re.compile('BUG ([0-9]+) TRIGGERED')
 
 def fetchHref(href):
-    global opener, tmpFile, outFile, searchTerms, found, start, end, chunkSize, offset, cmd
+    global opener, tmpFile, outFile, searchTerms, fileType, found, start, end, chunkSize, offset, cmd
 
     print href
     with open(outFile,'at') as f:
@@ -67,7 +67,7 @@ def fetchHref(href):
 #    except IOError:
 #        pass
 
-    errorcode = 0
+    errorcode = -1
     try:
         line = proc.stderr.readline()
         print 'Output is ' + line
@@ -80,7 +80,7 @@ def fetchHref(href):
         proc.stderr.close()
 
     proc.wait()
-    if 0 != errorcode and errorcode not in found:
+    if -1 != errorcode and errorcode not in found:
         found.append(errorcode)
     print 'Returncode=' + str(proc.returncode)
 
@@ -101,10 +101,11 @@ def timeTest(time, proc):
     timer.cancel()
 
 def ParseArguments():
-	global inFile, outFile, tmpFile, dontIgnore, searchTerms, repeat \
+	global inFile, outFile, tmpFile, dontIgnore, searchTerms, \
+	fileType, repeat \
                , found, start, end, chunkSize, offset, cmd
         try:
-            optionals, args = getopt.getopt(sys.argv[1:], "i:o:t:d:p:s:rh", ["infile=", "outfile=", "tempfile=", "dontignore=", "prefile=", "search=", "repeat", "help"])
+            optionals, args = getopt.getopt(sys.argv[1:], "i:o:t:d:p:s:f:rh", ["infile=", "outfile=", "tempfile=", "dontignore=", "prefile=", "search=", "filetype=", "repeat", "help"])
         except getopt.GetoptError, err:
             # print help information and exit:
             print str(err) # will print something like "option -a not recognized"
@@ -129,6 +130,8 @@ def ParseArguments():
                 dontIgnore = int(a)
             elif o in ("-s", "--search"):
                 searchTerms = a
+	    elif o in ("-f", "--filetype"):
+		fileType = a
             elif o in ("-h", "--help"):
                 usage()
                 sys.exit()
@@ -142,8 +145,8 @@ def ParseArguments():
             sys.exit()
             
         for i in xrange(start, end): #(9, 100): #00000):
-            url = 'http://www.google.com/search?q=%s+filetype:ps&num=%d&hl=en&lr=&as_qdr=all&ie=UTF-8&start=%d&sa=N'\
-                  % (searchTerms, chunkSize, i * chunkSize)
+            url = 'http://www.google.com/search?q=%s+filetype:%s&num=%d&hl=en&lr=&as_qdr=all&ie=UTF-8&start=%d&sa=N'\
+                  % (searchTerms, fileType, chunkSize, i * chunkSize)
 #    url =  'http://www.google.com/search?q=+filetype:ps+.ps&num=%d&hl=en&lr=&as_qdr=all&start=%d&sa=N' % (chunkSize, i * chunkSize)
             print url
 
