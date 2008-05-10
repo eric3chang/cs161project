@@ -1064,7 +1064,7 @@ class PSDD(DD):
         #    except IOError:
         #        pass
         
-        errorcode = 0
+        errorcode = -1
         stderroutput = ''
         try:
 #                for line in proc.stderr.readlines():
@@ -1086,7 +1086,7 @@ class PSDD(DD):
         if self.verbose:
             print '\n^^>Returncode=%d Errorcode=%d Unrecoverable=%d' %\
                   (proc.returncode, errorcode, unrecoverable),
-        if errorcode == 0:
+        if errorcode == -1:
             if unrecoverable == -1:
                 if self.verbose:
                     print ' ^>PASS!',
@@ -1097,7 +1097,7 @@ class PSDD(DD):
         if self.verbose:
             print ''
         return self.FAIL
-            
+
     def __init__(self, dontIgnore=-1, tmpFile='/tmp/tmp.dd'):
         self.tmpFile = tmpFile
         self.dontIgnore = dontIgnore
