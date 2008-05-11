@@ -8,6 +8,7 @@ import commands
 import subprocess
 import time
 import random
+import string
 
 import code_gen
 
@@ -23,8 +24,8 @@ replay = False
 trials = False
 timeoutOk = False
 timeoutFail = False
-supported_file_specs = ['postscript']
-supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'ps-file']
+supported_file_specs = ['postscript', 'postscript-cut-up']
+supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file']
 
 
 def PrintUsage():
@@ -71,6 +72,11 @@ def GenerateFuzzFile(fuzz_file_spec):
 		raise "Unsupported SPEC for --fuzz-file option"
 
 	fuzz = code_gen.getFuzzInput('postscript', seed)
+	if fuzz_file_spec == "postscript-cut-up":
+		fuzz_split = fuzz.split()
+		print str(fuzz_split)
+		random.shuffle(fuzz_split)
+		fuzz = string.join(fuzz_split)
 	if (debug):
 		print "Fuzz input: " + fuzz
 	filename = "fuzz_input_file_trial%d_%s_%d" % (fileTrial, os.uname()[1], seed)
