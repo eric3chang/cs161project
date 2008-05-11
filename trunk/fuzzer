@@ -26,7 +26,7 @@ timeoutOk = False
 timeoutFail = False
 supported_file_specs = ['postscript', 'postscript-cut-up']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file']
-
+nullFile = open('/dev/null', 'a')
 
 def PrintUsage():
 	print "Incorrect Usage"
@@ -95,7 +95,7 @@ def timeTest(time, proc):
 
 def FuzzProgram(opts, args):
 	global seed, debug, replay, trials, timeoutOk, timeoutFail
-	global fileTrial, filename
+	global fileTrial, filename, nullFile
 	numTrials = int(opts.get('trials', 2000000000))
 
 	# Check debugging
@@ -119,7 +119,8 @@ def FuzzProgram(opts, args):
 			print "Replay Command: " + cmd + "\n"
 		elif (replay):
 			print cmd
-		proc = Popen(cmd, shell=True)
+
+		proc = Popen(cmd, shell=True, stdout=nullFile, stderr=nullFile)
 		
 		if timeoutFail:
 			timeTest(int(opts['timeout-fail']), proc)
