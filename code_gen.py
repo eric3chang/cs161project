@@ -174,7 +174,7 @@ def getFuzzInput(spec, seed):
 	totalOutput = cStringIO.StringIO()
 	
 	if not startSym:
-		grammar_sections = ReadGrammarFile("./conservative_ps.grm")
+		grammar_sections = ReadGrammarFile("./" + spec +  ".grm")
 		nt_prod_map = ParseNonTerminals(grammar_sections[0])
 		t_prod_map = ParseTerminals(grammar_sections[1])
 
