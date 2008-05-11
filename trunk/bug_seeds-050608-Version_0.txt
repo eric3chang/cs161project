@@ -1,4 +1,4 @@
-these seeds no longer work as of 5/7 18:03
+these seeds only work on fuzzer_050608_Version_0
 
 Bug 1: ./fuzzer --replay 1210105748 ./pstotext-linux-x86 --fuzz-file postscript
 
