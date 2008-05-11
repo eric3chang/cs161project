@@ -1,13 +1,14 @@
 echo "=================================================================="
-echo "RUNNING INFINITE TIMES"
+echo "REPLAYING"
 
 if [ $# -eq 1 ]
 then
-	echo "IGNORING BUGS $1"
+	echo "REPLAY BUG = $1"
 	echo "=================================================================="
-    ./fuzzer ./pstotext-linux-x86 -ignore $1 --fuzz-file postscript
+	./fuzzer --replay $1 ./pstotext-linux-x86 --fuzz-file postscript
 else
 	echo "=================================================================="
-	./fuzzer ./pstotext-linux-x86 --fuzz-file postscript
+	./fuzzer sd
 fi
 echo "------------------------------------------------------------------"
+
