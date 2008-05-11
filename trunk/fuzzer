@@ -131,7 +131,7 @@ def FuzzProgram(opts, args):
 
 		MonitorForkedProcess(proc, opts)
 	
-		if proc.returncode == -11 or proc.returncode == 139 or (proc.returncode == -15 and not timeoutOk):
+		if not replay and (proc.returncode == -11 or proc.returncode == 139 or (proc.returncode == -15 and not timeoutOk)):
 			print seed
 			if filename:
 				os.system('mv %s BUG_%s' % (filename, filename))
