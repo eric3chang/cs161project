@@ -74,7 +74,6 @@ def GenerateFuzzFile(fuzz_file_spec):
 	fuzz = code_gen.getFuzzInput('postscript', seed)
 	if fuzz_file_spec == "postscript-cut-up":
 		fuzz_split = fuzz.split()
-		print str(fuzz_split)
 		random.shuffle(fuzz_split)
 		fuzz = string.join(fuzz_split)
 	if (debug):
