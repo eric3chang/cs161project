@@ -73,7 +73,7 @@ def GenerateFuzzFile(fuzz_file_spec):
 	fuzz = code_gen.getFuzzInput('postscript', seed)
 	if (debug):
 		print "Fuzz input: " + fuzz
-	filename = "fuzz_input_file_trial%d_%s_%d" % (fileTrial, os.uname()[1], urand.randint(0, 999999999))
+	filename = "fuzz_input_file_trial%d_%s_%d" % (fileTrial, os.uname()[1], seed)
 	fd = open(filename, 'w')
 	fd.write(fuzz)
 	return filename
