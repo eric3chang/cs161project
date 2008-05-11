@@ -1,0 +1,277 @@
+#!/usr/bin/env perl
+
+$USAGE = <<EOU;
+Usage: testingscript TARBALL
+
+This script will run a series of checks on the file TARBALL (which
+should be named "project.tar.gz") to see if it satisfies the final
+project submission requirements. The checks concern both the presence
+of the correct files in the tarball and the basic interface of the
+fuzzer.
+
+EOU
+
+chomp(my $origdir = `pwd`);
+my $tmpdir = sprintf 'tmp-testingscript-%08d', int(rand(100000000));
+my $tarball = shift @ARGV;
+
+if( not $tarball ) {
+  print $USAGE;
+  exit 1 }
+
+sub cem {
+  if( -d "$origdir/$tmpdir" ) {
+    system "rm -rf \"$origdir/$tmpdir\"" }
+  print shift;
+  exit 1 }
+
+sub spitfile {
+  my $f = shift;
+  my $s = shift;
+  open F, "> $f";
+  print F $s;
+  close F }
+
+sub qsys {
+  my $cmd = shift;
+  system "$cmd >/dev/null 2>&1";
+  return not $? }
+
+sub csys {
+  my $cmd = shift;
+  my $out = `$cmd 2>&1`;
+  return $? ? undef : $out }
+
+sub fsys {
+  my $cmd = shift;
+  my $out = `$cmd 2>&1`;
+  cem <<EOS if $?;
+
+Oops! There was some problem running your fuzzer. The command we tried
+was "$cmd".
+
+Please ensure you can successfully run your code on one of the ilinux
+machines. If you can build your code there but not on this machine,
+try the script again there.
+
+EOS
+  return $out }
+
+print "Checking \"$tarball\" ...\n";
+
+cem "\nFile \"$tarball\" not found in current directory!\n\n" . $USAGE if not -f $tarball;
+
+cem <<EOS if $tarball ne "project.tar.gz";
+
+Oops! The final submission tarball should be named "project.tar.gz"
+rather than "$tarball".
+
+EOS
+
+mkdir $tmpdir;
+qsys "cp $tarball $tmpdir/";
+chdir $tmpdir;
+
+qsys "tar -zxf $tarball";
+cem <<EOS if $?;
+
+Oops! Could not unpack "$tarball". Please ensure that it can be
+properly opened with "tar -zxf $tarball".
+
+EOS
+
+cem <<EOS if not -d 'project';
+
+Oops! The submission tarball "$tarball" should contain a directory
+named "project". To make it properly, put your code, etc. in a
+directory named "project" and create the tarball with the following
+command:
+
+  tar -zc project > project.tar.gz
+
+EOS
+
+chdir 'project';
+
+cem <<EOS if not -f 'designdocument.pdf' and not -f 'designdocument.ps';
+
+Oops! The "project" directory within the tarball contains neither a
+file named "designdocument.pdf" nor one named "designdocument.ps".
+
+Please include your final design document under the appropriate name.
+
+EOS
+
+cem <<EOS if not -f 'BUGSPSTOTEXT';
+
+Oops! The "project" directory within the tarball doesn't contain a
+file named "BUGSPSTOTEXT".
+
+EOS
+
+cem <<EOS if not -f 'fuzzer' and not -f 'Makefile';
+
+Oops! The "project" directory within the tarball contains neither a
+file named "fuzzer" nor a file named "Makefile".
+
+If your code requires compilation, please ensure your tarball contains
+a file named "Makefile" (not "makefile", etc.).
+
+Otherwise, please ensure your tarball already contains an executable
+for your fuzzer, which should be named "fuzzer" (not "Fuzzer",
+"fuzzer.sh", "fuzzer.py", etc.).
+
+EOS
+
+if( -f 'Makefile' ) {
+  qsys "make";
+  cem <<EOS if $?;
+
+Oops! The "project" directory within the tarball contains a Makefile,
+but running "make" produced an error. Please ensure you can
+successfully build your code by running make within the project
+directory on one of the ilinux machines.
+
+If you can build your code on the ilinux machines but not on this
+machine, try the script again there.
+
+EOS
+
+  cem <<EOS if not -f 'fuzzer' }
+
+Oops! The "project" directory contain a Makefile, but after running
+make, no file named "fuzzer" was found.
+
+Whether the main executable for your fuzzer is produced by running the
+Makefile, or it is a script already present, please ensure it is named
+"fuzzer" (not "Fuzzer", "fuzzer.sh", "fuzzer.py", etc.).
+
+EOS
+
+cem <<EOS if not -x 'fuzzer';
+
+Oops! The file "fuzzer" within the "project" directory is not
+executable. This can be fixed by doing "chmod +x fuzzer".
+
+EOS
+
+cem <<EOS if not qsys "./fuzzer --trials 1 /bin/echo foo";
+
+Oops! There was some problem running your fuzzer. The test we tried
+was "./fuzzer --trials 1 /bin/echo foo".
+
+Please ensure you can successfully run your code on one of the ilinux
+machines. If you can build your code there but not on this machine,
+try the script again there.
+
+EOS
+
+cem <<EOS if fsys("./fuzzer --trials 1 /bin/echo foo") =~ /\S/;
+
+Oops! We tried testing your fuzzer as "./fuzzer --trials 1 /bin/echo foo",
+but it produced output.
+
+Keep in mind that when running in search mode, the fuzzer should not
+produce any output other than seeds. Since "/bin/echo foo" shouldn't
+segfault, "./fuzzer --trials 1 /bin/echo foo" should produce no output.
+
+In particular, make sure that (by default) your fuzzer redirects the
+stdout and stderr of the command it is testing so nothing gets printed
+out.
+
+EOS
+  
+cem <<EOS if fsys("./fuzzer --trials 1 cat nonexistentfile") =~ /\S/;
+
+Oops! We tried testing your fuzzer as "./fuzzer --trials 1 cat nonexistentfile",
+but it produced output.
+
+Keep in mind that when running in search mode, the fuzzer should not
+produce any output other than seeds. Make sure that, by default, your
+fuzzer redirects the stdout and stderr of the command it is testing so
+nothing gets printed out.
+
+Since "cat nonexistentfile" won't segfault (although it does exit with
+an error message), "./fuzzer --trials 1 cat nonexistentfile" should
+produce no output.
+
+EOS
+
+$segv = <<EOS;
+int main(int argc, char** argv) {
+  int* a;
+
+  a = 0;
+  *a = 1;
+
+  return 0;
+}
+EOS
+spitfile "segv.c", $segv;
+qsys "gcc -o segv segv.c";
+if( fsys("./fuzzer --trials 1 ./segv") =~ /^\s*$/s ) {
+  spitfile "../../segv.c", $segv;
+  qsys "cp segv ../../";
+  cem <<EOS }
+
+Oops! We tried testing your fuzzer as "./fuzzer --trials 1 ./segv",
+but it didn't print a seed.
+
+The "segv" program was compiled from segv.c, and both have been copied
+to this directory.
+
+Please ensure that your code correctly detects when a program
+segfaults and prints a seed.
+
+EOS
+
+if( fsys("./fuzzer --trials 1 ./segv") =~ /\S\s\S/s ) {
+  spitfile "../../segv.c", $segv;
+  qsys "cp segv ../../";
+  cem <<EOS }
+
+Oops! We tried testing your fuzzer as "./fuzzer --trials 1 ./segv", but
+the output was not as expected. The "segv" program was compiled from
+segv.c, and both have been copied to this directory.
+
+Your fuzzer printed some output, but it didn't seem to be in the
+format of a seed.
+
+Please ensure that when your fuzzer prints a seed, it prints it on a
+line by itself, without any additional whitespace or any other output.
+
+EOS
+
+$incruns = <<'EOS';
+#!/usr/bin/env perl
+
+if( -f 'runs' ) {
+  chomp($runs = `cat runs`);
+  $runs++;
+  system "echo $runs > runs" }
+else {
+  system "echo 1 > runs" }
+EOS
+spitfile "incruns", $incruns;
+qsys "chmod +x incruns";
+fsys "./fuzzer --trials 5 ./incruns";
+cem <<EOS if `cat runs 2>/dev/null` ne "5\n";
+
+Oops! We tried testing the --trials option of your fuzzer, but it
+didn't seem to run the testing program the correct number of times.
+
+EOS
+
+print <<EOS;
+
+Awesome! All checks were successful.
+
+Your tarball seems to have all the required files, and the basic
+functionality (running, detecting crashes and printing seeds, and the
+--trials option) of the fuzzer seems to be working. Note, however,
+that this script does not check for the extra credit bugs file or test
+replay mode or the timeout options.
+
+EOS
+
+system "rm -rf \"$origdir/$tmpdir\"";
