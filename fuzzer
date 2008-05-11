@@ -50,11 +50,18 @@ def MonitorForkedProcess(pObj, optional_args):
 def GenerateFuzzString(fuzz_string_spec):
 	global seed
 	global supported_string_specs
+	fuzz = None
 
 	if not fuzz_string_spec in supported_string_specs:
 		raise "Unsupported SPEC for --fuzz-string option"
 	
-	fuzz = code_gen.getFuzzInput('postscript', seed)
+	# hard-coded seeds for web-scraped files
+	if (seed == 63194):
+		fd = open('./urlbug16_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	else:
+		fuzz = code_gen.getFuzzInput('postscript', seed)
 
 	if (debug):
 		print "Fuzz input: " + fuzz
@@ -71,7 +78,13 @@ def GenerateFuzzFile(fuzz_file_spec):
 	if not fuzz_file_spec in supported_file_specs:
 		raise "Unsupported SPEC for --fuzz-file option"
 
-	fuzz = code_gen.getFuzzInput('postscript', seed)
+	if (seed == 63194):
+		fd = open('./urlbug16_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	else:
+		fuzz = code_gen.getFuzzInput('postscript', seed)
+
 	if fuzz_file_spec == "postscript-cut-up":
 		fuzz_split = fuzz.split()
 		random.shuffle(fuzz_split)
