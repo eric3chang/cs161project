@@ -1,0 +1,21 @@
+Instructions for the web scraper "soup.py"
+
+Run as: python soup.py -s "search+terms" [-f ext]
+where search+terms is properly formatted google query (using + signs for spaces)
+and ext is the file extension being searched for (defaults to "ps")
+
+There is an array called ignore in soup.py to which the user may add the bug numbers being ignored.
+There are also variables offset, start and end which may be used in resuming searches and limiting the number of results.
+
+soup.py can only be run from rhombus; other machines have problems with the python version
+
+Instructions for DDFrontEnd.py
+
+Invoke the command as: python DDFrontEnd.py  -i input-file -o output-file [-d bug#] [-r]
+
+input-file is the bug-producing input to be minimalized
+output file is where the 1-minimal bug producing input is saved
+bug # is the bug number *not* to ignore
+-r signals to reiterate until multiple runs do not create a smaller "1-minimal" file
+
+ 
