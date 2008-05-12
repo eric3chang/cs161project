@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from __future__ import with_statement
 from BeautifulSoup import BeautifulSoup
 import urllib2
@@ -11,7 +12,7 @@ import string
 import random
 import getopt
 
-cmd = './pstotext-solaris-x86'
+cmd = './pstotext-linux-x86'
 timeout = 5
 found = [1,3,5,6,7,9,10,11,12,13,14,15,16,17,18,19]
 chunkSize = 100
@@ -31,7 +32,7 @@ def fetchHref(href):
     global opener, tmpFile, outFile, searchTerms, fileType, found, start, end, chunkSize, offset, cmd
 
     print href
-    with open(outFile,'at') as f:
+    with open ( outFile,'at') as f:
         if len(found) == 20:
             f.write('Found all 20 bugs')
             sys.exit()
