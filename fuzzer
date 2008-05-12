@@ -24,7 +24,7 @@ replay = False
 trials = False
 timeoutOk = False
 timeoutFail = False
-supported_file_specs = ['postscript', 'postscript-cut-up']
+supported_file_specs = ['postscript', 'postscript-cut-up', 'eric_ps']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file', 'random']
 nullFile = open('/dev/null', 'a')
 
@@ -148,8 +148,8 @@ def FuzzProgram(opts, args):
 			if not replay:
 				print seed
 
-			if filename:
-				os.system('mv %s BUG_%s' % (filename, filename))
+#			if filename:
+#				os.system('mv %s %s' % (filename, filename))
 			return
 		if filename:
 			os.remove(filename)
