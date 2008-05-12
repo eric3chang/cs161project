@@ -1,0 +1,8 @@
+#EXTRA CREDIT BUG FOUND
+#Adarsh Uppula, Manu Srivastava, Mike Hughes, Eric Chang
+
+#Following bug found in stock pstotext-1.9 from ftp://mirror.cs.wisc.edu/pub/mirrors/ghost/contrib/pstotext-1.9.tar.gz.
+#It is also shipped with the Ubuntu 8.04 distro.
+
+#Run this to verify bug (where ./pstotext-1.9/pstotext is the executable)
+./fuzzer --replay 85942844 ./pstotext-1.9/pstotext --fuzz-file postscript
