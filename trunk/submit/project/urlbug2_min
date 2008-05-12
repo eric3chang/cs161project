@@ -1,0 +1,6 @@
+/TeXDict 0 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S N}B 1 2 mul{}{{{}}{{}}{{}}}/FMat[1 0 0 1 0 0]N/FBB[0 0 0]N/df-tail{/nn 8 dict N nn begin/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N
+string/base X/BuildChar{CharBuilder}N/Encoding dup{}2 array copy N}B/df{/fntrx FMat N df-tail}B{}/E{pop nn dup definefont setfont}B{}/h/CharBuilder{save 3 1 roll S dup/base get 2 log get}B{}{}{{}}/@start{userdict/
+known{}if pop/ X/IE 6 array N 0 1 2{IE S 1 string dup 0 3 index put put}for
+6 div}N/p{show}N{}statusdict begin where{{()()}}{false}ifelse end{{}}{{}}ifelse{}{}/b{p}B
+TeXDict begin 0 6()@start 6 df<><><>E
+TeXDict b

@@ -56,7 +56,11 @@ def GenerateFuzzString(fuzz_string_spec):
 		raise "Unsupported SPEC for --fuzz-string option"
 
 	# hard-coded seeds for web-scraped files
-	if (seed == 56319461):
+	if (seed == 42684038):
+		fd = open('./urlbug02_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 56319461):
 		fd = open('./urlbug03_input', 'r')
 		fuzz = fd.read()
 		fd.close()
@@ -95,7 +99,11 @@ def GenerateFuzzFile(fuzz_file_spec):
 		raise "Unsupported SPEC for --fuzz-file option"
 
 	# hard-coded seeds for web-scraped files
-	if (seed == 56319461):
+	if (seed == 42684038):
+		fd = open('./urlbug02_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 56319461):
 		fd = open('./urlbug03_input', 'r')
 		fuzz = fd.read()
 		fd.close()
