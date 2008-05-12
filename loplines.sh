@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 file=$1
 lines=`wc -l $file | cut -d ' ' -f 1`
@@ -17,11 +17,11 @@ echo "$file and $errorcode ignore $ignore"
 
 
 while [ $? -eq $errorcode ]; do
-    head -n $counter $file > $file.tmp.ps 
     echo The counter is $counter
+    head -n $counter $file > $file.tmp.ps 
     counter=`expr $counter - $stepsize`
     ./pstotext-linux-x86 -ignore $ignore $file.tmp.ps > /dev/null 2>&1
 done
-/bin/rm $file.tmp.ps
+/bin/rm ${file}.tmp.ps
 
 head -n `expr $counter + $stepsize + $stepsize` $file > $file.lopped

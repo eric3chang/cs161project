@@ -47,6 +47,7 @@
 from subprocess import *
 import re
 import sys, os
+import random, time
 ##
 import string
 
@@ -1092,10 +1093,22 @@ class PSDD(DD):
                     print ' ^>PASS!',
                 return self.PASS
             return self.UNRESOLVED
+        # we've encountered a FAIL at this point
         if self.verbose:
-            print ' ^>FAIL!',
-        if self.verbose:
-            print ''
+            print ' ^>FAIL!'
+        if self.failSave:
+            lastMod = 0
+            try:
+                lastMod = os.stat(self.failSave)[8]
+            except OSError:
+                pass
+            if (not lastMod) or (int(time.time()) - lastMod > 300):
+                # if last modification was > 5 min ago
+                fs = open(self.failSave, 'wt')
+                try:
+                    fs.write(tmpdata)
+                finally:
+                    fs.close()
         return self.FAIL
 
     def __init__(self, dontIgnore=-1, tmpFile='/tmp/tmp.dd'):
@@ -1104,6 +1117,7 @@ class PSDD(DD):
         self._test = self._test_char
         DD.__init__(self)
         self.verbose = 1#False
+        self.failSave = 'fail-save-'+ str(random.randint(0, 999999999)) +'.dd'
 
         self.reg = re.compile('BUG ([0-9]+) TRIGGERED')
         cmd = './pstotext-%s-%s' % self.determinePlatform()
