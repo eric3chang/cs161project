@@ -25,7 +25,7 @@ trials = False
 timeoutOk = False
 timeoutFail = False
 supported_file_specs = ['postscript', 'postscript-cut-up']
-supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file']
+supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file', 'random']
 nullFile = open('/dev/null', 'a')
 
 def PrintUsage():
