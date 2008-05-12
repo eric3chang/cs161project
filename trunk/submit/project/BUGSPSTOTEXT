@@ -6,13 +6,14 @@
 ./fuzzer --replay 868255663537243097 ./pstotext-linux-x86 --fuzz-file postscript-cut-up
 #Bug 1:
 ./fuzzer --replay 593237469 ./pstotext-linux-x86 --fuzz-file postscript
+#Bug 3:
+./fuzzer --replay 56319461 ./pstotext-linux-x86 -ignore 7 --fuzz-file postscript
 #Bug 5:
 ./fuzzer --replay 203566845 ./pstotext-linux-x86 --fuzz-file postscript
 #Bug 6:
 ./fuzzer --replay 224065117 ./pstotext-linux-x86 --fuzz-file postscript
-
-
-
+#Bug 7:
+./fuzzer --replay 334043899 ./pstotext-linux-x86 --fuzz-file postscript
 #Bug 8:
 ./fuzzer --replay 6826426521737934585 ./pstotext-linux-x86 --fuzz-file postscript-cut-up
 #Bug 9:
@@ -25,7 +26,15 @@
 ./fuzzer --replay 674410675 ./pstotext-linux-x86 --fuzz-file postscript
 #Bug 13:
 ./fuzzer --replay 851901009 ./pstotext-linux-x86 --fuzz-file postscript
+#Bug 14:
+./fuzzer --replay 54516527 ./pstotext-linux-x86 -ignore 7 --fuzz-file postscript
+#Bug 15:
+./fuzzer --replay 62742158 ./pstotext-linux-x86 --fuzz-file postscript
+#Bug 16:
+./fuzzer --replay 62225978 ./pstotext-linux-x86 --fuzz-file postscript
 #Bug 17:
 ./fuzzer --replay 971003201 ./pstotext-linux-x86 --fuzz-file postscript
+#Bug 18:
+./fuzzer --replay 29600418 ./pstotext-linux-x86 -ignore 7 --fuzz-file postscript
 #Bug 19:
 ./fuzzer --replay 679511341 ./pstotext-linux-x86 --fuzz-file postscript
