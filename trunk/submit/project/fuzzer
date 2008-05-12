@@ -171,8 +171,10 @@ def FuzzProgram(opts, args):
 			print "Debug Command: " + cmd + "\n"
 		if (replay and debug):
 			print "Replay Command: " + cmd + "\n"
+			return
 		elif (replay):
 			print cmd
+			return
 
 		proc = Popen(cmd, shell=True, stdout=nullFile, stderr=nullFile)
 		
