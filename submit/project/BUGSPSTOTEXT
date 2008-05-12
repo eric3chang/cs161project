@@ -6,6 +6,8 @@
 ./fuzzer --replay 868255663537243097 ./pstotext-linux-x86 --fuzz-file postscript-cut-up
 #Bug 1:
 ./fuzzer --replay 593237469 ./pstotext-linux-x86 --fuzz-file postscript
+#Bug 2:
+./fuzzer --replay 42634038 ./pstotext-linux-x86 --fuzz-file postscript
 #Bug 3:
 ./fuzzer --replay 56319461 ./pstotext-linux-x86 -ignore 7 --fuzz-file postscript
 #Bug 5:
