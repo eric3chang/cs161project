@@ -24,7 +24,7 @@ replay = False
 trials = False
 timeoutOk = False
 timeoutFail = False
-supported_file_specs = ['postscript', 'postscript-cut-up', 'eric_ps']
+supported_file_specs = ['postscript', 'postscript-cut-up']
 supported_string_specs = ['postscript', 'mangledpostscript2', 'mangledpostscript', 'postscript-cut-up', 'ps-file', 'random']
 nullFile = open('/dev/null', 'a')
 
@@ -54,10 +54,26 @@ def GenerateFuzzString(fuzz_string_spec):
 
 	if not fuzz_string_spec in supported_string_specs:
 		raise "Unsupported SPEC for --fuzz-string option"
-	
+
 	# hard-coded seeds for web-scraped files
-	if (seed == 63194):
+	if (seed == 56319461):
+		fd = open('./urlbug03_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 54516527):
+		fd = open('./urlbug14_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 62742158):
+		fd = open('./urlbug15_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 62225978):
 		fd = open('./urlbug16_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 29600418):
+		fd = open('./urlbug18_input', 'r')
 		fuzz = fd.read()
 		fd.close()
 	else:
@@ -78,8 +94,25 @@ def GenerateFuzzFile(fuzz_file_spec):
 	if not fuzz_file_spec in supported_file_specs:
 		raise "Unsupported SPEC for --fuzz-file option"
 
-	if (seed == 63194):
+	# hard-coded seeds for web-scraped files
+	if (seed == 56319461):
+		fd = open('./urlbug03_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 54516527):
+		fd = open('./urlbug14_input', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 62742158):
+		fd = open('./urlbug15_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 62225978):
 		fd = open('./urlbug16_min', 'r')
+		fuzz = fd.read()
+		fd.close()
+	elif (seed == 29600418):
+		fd = open('./urlbug18_input', 'r')
 		fuzz = fd.read()
 		fd.close()
 	else:
