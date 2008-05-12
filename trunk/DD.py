@@ -1129,7 +1129,7 @@ class PSDD(DD):
                 if i != self.dontIgnore:
                     ignore.append(i)
             ignorestr = str(ignore).strip('][').replace(' ', '')
-            self.cmdstr =  '%s -ignore %s %s' % (cmd, ignorestr, self.tmpFile)
+            self.cmdstr =  '' #'%s -ignore %s %s' % (cmd, ignorestr, self.tmpFile)
         else:
             self.cmdstr =  '%s %s' % (cmd, self.tmpFile)
         print self.cmdstr
